@@ -59,8 +59,10 @@
                 <button onclick="setAmount(500)">500</button>
             </div>
             <button id="transfer">转账</button>
-            <button id="buyFromBank">购买资产</button>
-            <button id="mortgage">资产抵押</button>
+            <button id="buyAssetButton" onclick="openModal('buyAssetModal')">购买资产</button>
+            <button id="mortgageButton" onclick="openModal('mortgageModal')">资产抵押</button>
+            <!-- <button id="buyFromBank">购买资产</button>
+            <button id="mortgage">资产抵押</button> -->
         </div>
         <div id="roundDisplay">轮次: 0</div>
         <div class="eco-curve">经济曲线</div>
@@ -92,6 +94,33 @@
             <button id="confirmInit">确认</button>
         </div>
     </div>
+
+    <!-- 购买资产模态窗口 -->
+    <div id="buyAssetModal" class="modal">
+        <div class="modal-content">
+            <h2>购买资产</h2>
+            <label for="buyAmount">金额:</label>
+            <input type="number" id="buyAmount" min="1">
+            <button onclick="buyAsset()">确认</button>
+            <button onclick="closeModal('buyAssetModal')">取消</button>
+        </div>
+    </div>
+
+    <!-- 资产抵押模态窗口 -->
+    <div id="mortgageModal" class="modal">
+        <div class="modal-content">
+            <h2>资产抵押</h2>
+            <label for="mortgageOriginalPrice">原价:</label>
+            <input type="number" id="mortgageOriginalPrice" min="1">
+            <label for="mortgagePrice">抵押价格:</label>
+            <input type="number" id="mortgagePrice" min="1">
+            <button onclick="mortgageAsset()">确认</button>
+            <button onclick="closeModal('mortgageModal')">取消</button>
+        </div>
+    </div>
+
+    <!-- 模态窗口的背景遮罩 -->
+    <div id="overlay" onclick="closeModals()"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>

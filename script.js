@@ -19,8 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("confirmInit").addEventListener("click", initializeCash);
     document.getElementById("nextRound").addEventListener("click", nextRound);
     document.getElementById("transfer").addEventListener("click", transferMoney);
-    document.getElementById("buyFromBank").addEventListener("click", buyFromBank);
-    document.getElementById("mortgage").addEventListener("click", mortgageAsset);
     document.getElementById("exportData").addEventListener("click", exportData);
     document.getElementById("importDataButton").addEventListener("click", () => document.getElementById("importData").click());
     document.getElementById("importData").addEventListener("change", importData);
@@ -147,12 +145,15 @@ function initializeCash() {
     const modal = document.getElementById("initModal");
     modal.style.display = "none";
     updatePlayersDisplay();
+    updateCharts();
 }
 
 function nextRound() {
     round++;
     saveHistory();
     updateCharts();
+    // 清空日志
+    document.getElementById("logList").innerHTML = "";
     document.getElementById("roundDisplay").textContent = "轮次: " + round;
 }
 
@@ -188,6 +189,8 @@ function transferMoney() {
 
     addLog(logMessage);
     updatePlayersDisplay();
+    saveHistory();
+    updateCharts();
 
 }
 
@@ -245,11 +248,21 @@ function saveHistory() {
         totalAsset: player.totalAsset,
         cash: player.cash
     }));
-
-    history.push({
-        round: round,
-        snapshot: snapshot
-    });
+    // 如果当前轮次已经有数据，则更新；否则新增
+    // 查找最新的一轮数据中的round，如果等于当前round，则更新，否则新增
+    const latestRound = history.find(h => h.round === round);
+    if (latestRound) {
+        latestRound.snapshot = snapshot;
+    } else {
+        history.push({
+            round: round,
+            snapshot: snapshot
+        });
+    }
+    // history.push({
+    //     round: round,
+    //     snapshot: snapshot
+    // });
 }
 
 function updateCharts() {
@@ -381,4 +394,64 @@ function setPlayerAsTo(playerIndex) {
 // 设置交易金额
 function setAmount(amount) {
     document.getElementById('amount').value = amount;
+}
+
+// 显示模态窗口
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+// 关闭模态窗口
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+
+// 关闭所有模态窗口
+function closeModals() {
+    closeModal('buyAssetModal');
+    closeModal('mortgageModal');
+}
+
+// 购买资产逻辑
+function buyAsset() {
+    const toIndex = document.getElementById('fromPlayer').value;
+    const amount = parseInt(document.getElementById('buyAmount').value);
+    
+    if (toIndex === 'bank' || isNaN(amount) || amount <= 0) {
+        alert('请输入有效的金额');
+        return;
+    }
+    
+    players[toIndex].cash -= amount; // 扣除现金
+    // players[toIndex].totalAsset += amount; // 增加总资产
+    
+    addLog(`${players[toIndex].name} 从银行购买资产 ${amount}`);
+    updatePlayersDisplay();
+    saveHistory();
+    updateCharts();
+    closeModal('buyAssetModal');
+}
+
+// 资产抵押逻辑
+function mortgageAsset() {
+    const fromIndex = document.getElementById('fromPlayer').value;
+    const originalPrice = parseInt(document.getElementById('mortgageOriginalPrice').value);
+    const mortgagePrice = parseInt(document.getElementById('mortgagePrice').value);
+    
+    if (fromIndex === 'bank' || isNaN(originalPrice) || isNaN(mortgagePrice) || originalPrice <= 0 || mortgagePrice <= 0) {
+        alert('请输入有效的原价和抵押价格');
+        return;
+    }
+    
+    players[fromIndex].totalAsset -= originalPrice; // 扣除原价
+    players[fromIndex].cash += mortgagePrice; // 增加抵押价格
+    players[fromIndex].totalAsset += mortgagePrice; // 增加总资产
+    
+    addLog(`${players[fromIndex].name} 向银行抵押资产，原价 ${originalPrice}，抵押价格 ${mortgagePrice}`);
+    updatePlayersDisplay();
+    saveHistory();
+    updateCharts();
+    closeModal('mortgageModal');
 }
