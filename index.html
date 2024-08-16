@@ -3,70 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大富翁游戏财富记录</title>
+    <title>大富翁财富记录</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>大富翁游戏财富记录</h1>
-        <div id="players">
+        <h1>大富翁财富记录</h1>
+        <div id="players" class="players-container">
             <!-- 玩家信息将通过JS动态生成 -->
         </div>
         <div class="controls">
-            <button id="initialize">初始化现金</button>
-            <button id="nextRound">下一轮</button>
+            <button id="initialize" class="btn-primary">初始化现金</button>
+            <button id="nextRound" class="btn-primary">下一轮</button>
             <input type="file" id="importData" style="display:none;">
-            <button id="importDataButton">导入数据</button>
-            <button id="exportData">导出数据</button>
+            <button id="importDataButton" class="btn-secondary">导入数据</button>
+            <button id="exportData" class="btn-secondary">导出数据</button>
         </div>
         <div class="transaction">
             <h2>交易操作</h2>
-            <div>
+            <div class="transaction-row">
                 <label>转出方:</label>
-                <select id="fromPlayer">
+                <select id="fromPlayer" class="select-player">
                     <!-- 玩家选择框 -->
                 </select>
-                <button id="playerFromButton0" onclick="setPlayerAsFrom(0)">玩家1</button>
-                <button id="playerFromButton1" onclick="setPlayerAsFrom(1)">玩家2</button>
-                <button id="playerFromButton2" onclick="setPlayerAsFrom(2)">玩家3</button>
-                <button id="playerFromButton3" onclick="setPlayerAsFrom(3)">玩家4</button>
-                <button id="playerFromButton4" onclick="setPlayerAsFrom(4)">玩家5</button>
-                <button id="playerFromButton5" onclick="setPlayerAsFrom(5)">玩家6</button>
-                <button id="playerFromButton6" onclick="setPlayerAsFrom(6)">银行</button>
-
+                <div class="player-buttons">
+                    <button id="playerFromButton0" onclick="setPlayerAsFrom(0)">玩家1</button>
+                    <button id="playerFromButton1" onclick="setPlayerAsFrom(1)">玩家2</button>
+                    <button id="playerFromButton2" onclick="setPlayerAsFrom(2)">玩家3</button>
+                    <button id="playerFromButton3" onclick="setPlayerAsFrom(3)">玩家4</button>
+                    <button id="playerFromButton4" onclick="setPlayerAsFrom(4)">玩家5</button>
+                    <button id="playerFromButton5" onclick="setPlayerAsFrom(5)">玩家6</button>
+                    <button id="playerFromButton6" onclick="setPlayerAsFrom(6)">银行</button>
+                </div>
             </div>
-            <div>
+            <div class="transaction-row">
                 <label>转入方:</label>
-                <select id="toPlayer">
+                <select id="toPlayer" class="select-player">
                     <!-- 玩家选择框 -->
                 </select>
-                <button id="playerToButton0" onclick="setPlayerAsTo(0)">玩家1</button>
-                <button id="playerToButton1" onclick="setPlayerAsTo(1)">玩家2</button>
-                <button id="playerToButton2" onclick="setPlayerAsTo(2)">玩家3</button>
-                <button id="playerToButton3" onclick="setPlayerAsTo(3)">玩家4</button>
-                <button id="playerToButton4" onclick="setPlayerAsTo(4)">玩家5</button>
-                <button id="playerToButton5" onclick="setPlayerAsTo(5)">玩家6</button>
-                <button id="playerToButton6" onclick="setPlayerAsTo(6)">银行</button>
+                <div class="player-buttons">
+                    <button id="playerToButton0" onclick="setPlayerAsTo(0)">玩家1</button>
+                    <button id="playerToButton1" onclick="setPlayerAsTo(1)">玩家2</button>
+                    <button id="playerToButton2" onclick="setPlayerAsTo(2)">玩家3</button>
+                    <button id="playerToButton3" onclick="setPlayerAsTo(3)">玩家4</button>
+                    <button id="playerToButton4" onclick="setPlayerAsTo(4)">玩家5</button>
+                    <button id="playerToButton5" onclick="setPlayerAsTo(5)">玩家6</button>
+                    <button id="playerToButton6" onclick="setPlayerAsTo(6)">银行</button>
+                </div>
             </div>
-            <div>
+            <div class="transaction-row">
                 <label>金额:</label>
-                <input type="number" id="amount" placeholder="输入金额">
-                <button onclick="setAmount(20000)">20000</button>
-                <button onclick="setAmount(10000)">10000</button>
-                <button onclick="setAmount(5000)">5000</button>
-                <button onclick="setAmount(2000)">2000</button>
-                <button onclick="setAmount(1000)">1000</button>
-                <button onclick="setAmount(500)">500</button>
+                <input type="number" id="amount" placeholder="输入金额" class="input-amount">
+                <div class="amount-buttons">
+                    <button onclick="setAmount(20000)">20000</button>
+                    <button onclick="setAmount(10000)">10000</button>
+                    <button onclick="setAmount(5000)">5000</button>
+                    <button onclick="setAmount(2000)">2000</button>
+                    <button onclick="setAmount(1000)">1000</button>
+                    <button onclick="setAmount(500)">500</button>
+                </div>
             </div>
-            <button id="transfer">转账</button>
-            <button id="buyAssetButton" onclick="openModal('buyAssetModal')">购买资产</button>
-            <button id="mortgageButton" onclick="openModal('mortgageModal')">资产抵押</button>
-            <!-- <button id="buyFromBank">购买资产</button>
-            <button id="mortgage">资产抵押</button> -->
+            <button id="transfer" class="btn-primary">转账</button>
+            <button id="buyAssetButton" class="btn-secondary" onclick="openModal('buyAssetModal')">购买资产</button>
+            <button id="mortgageButton" class="btn-secondary" onclick="openModal('mortgageModal')">资产抵押</button>
         </div>
         <div id="roundDisplay">轮次: 0</div>
         <div class="eco-curve">经济曲线</div>
-        <div id="charts">
+        <div id="charts" class="charts-container">
             <div class="chart-container">
                 <div class="chartTitle">总资产</div>
                 <canvas id="assetChart"></canvas>
@@ -77,21 +80,24 @@
             </div>
         </div>
         <div class="logTitle">操作日志</div>
-        <div id="log">
+        <div id="log" class="log-container">
             <ul id="logList">
                 <!-- 日志将通过JS动态生成 -->
             </ul>
         </div>
+        <footer>
+            &copy; 2024 大富翁财富记录 by ASUA
+        </footer>
     </div>
 
     <!-- 初始化现金弹窗 -->
     <div id="initModal" class="modal">
         <div class="modal-content">
             <h2>初始化现金</h2>
-            <div id="initPlayersCash">
+            <div id="initPlayersCash" class="modal-body">
                 <!-- 动态生成玩家初始现金输入 -->
             </div>
-            <button id="confirmInit">确认</button>
+            <button id="confirmInit" class="btn-primary">确认</button>
         </div>
     </div>
 
@@ -100,9 +106,9 @@
         <div class="modal-content">
             <h2>购买资产</h2>
             <label for="buyAmount">金额:</label>
-            <input type="number" id="buyAmount" min="1">
-            <button onclick="buyAsset()">确认</button>
-            <button onclick="closeModal('buyAssetModal')">取消</button>
+            <input type="number" id="buyAmount" min="1" class="input-amount">
+            <button onclick="buyAsset()" class="btn-primary">确认</button>
+            <button onclick="closeModal('buyAssetModal')" class="btn-secondary">取消</button>
         </div>
     </div>
 
@@ -111,11 +117,11 @@
         <div class="modal-content">
             <h2>资产抵押</h2>
             <label for="mortgageOriginalPrice">原价:</label>
-            <input type="number" id="mortgageOriginalPrice" min="1">
+            <input type="number" id="mortgageOriginalPrice" min="1" class="input-amount">
             <label for="mortgagePrice">抵押价格:</label>
-            <input type="number" id="mortgagePrice" min="1">
-            <button onclick="mortgageAsset()">确认</button>
-            <button onclick="closeModal('mortgageModal')">取消</button>
+            <input type="number" id="mortgagePrice" min="1" class="input-amount">
+            <button onclick="mortgageAsset()" class="btn-primary">确认</button>
+            <button onclick="closeModal('mortgageModal')" class="btn-secondary">取消</button>
         </div>
     </div>
 

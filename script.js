@@ -121,7 +121,7 @@ function showInitModal() {
         const cashInput = document.createElement("div");
         cashInput.innerHTML = `
             <label>${player.name} 初始现金:</label>
-            <input type="number" id="cash_${index}" value="${player.cash}">
+            <input type="number" id="cash_${index}" value="50000">
         `;
         initPlayersCash.appendChild(cashInput);
     });
