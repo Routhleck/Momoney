@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大富翁游戏财富记录</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sql.js/dist/sql-wasm.js"></script>
 </head>
 <body>
     <div class="container">
@@ -18,6 +19,8 @@
             <input type="file" id="importData" style="display:none;">
             <button id="importDataButton">导入数据</button>
             <button id="exportData">导出数据</button>
+            <button id="saveData">保存数据</button>
+            <button id="loadData">加载数据</button>
         </div>
         <div class="transaction">
             <h2>交易操作</h2>
@@ -94,6 +97,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>

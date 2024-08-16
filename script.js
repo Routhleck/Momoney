@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("importData").addEventListener("change", importData);
 });
 
+// 初始化玩家信息
 function initializePlayers() {
     const playerContainer = document.getElementById("players");
     playerContainer.innerHTML = "";
