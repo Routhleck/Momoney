@@ -10,6 +10,7 @@ let players = [
 let bank = { name: "银行", cash: 1000000 };
 let round = 0;
 let history = [];
+let db;
 
 // 初始化页面
 document.addEventListener("DOMContentLoaded", function () {
@@ -31,11 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
     initDatabase();
 });
 
-let db;
-
 // 初始化数据库
 async function initDatabase() {
-    const SQL = await initSqlJs();
+    const SQL = await initSqlJs({ locateFile: filename => `https://cdn.jsdelivr.net/npm/sql.js/dist/${filename}` });
     db = new SQL.Database();
     createTables();
     loadFromDatabase();
