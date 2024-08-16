@@ -1,4 +1,3 @@
-// 玩家信息
 let players = [
     { name: "玩家1", color: "", totalAsset: 0, cash: 0 },
     { name: "玩家2", color: "", totalAsset: 0, cash: 0 },
@@ -25,7 +24,115 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("exportData").addEventListener("click", exportData);
     document.getElementById("importDataButton").addEventListener("click", () => document.getElementById("importData").click());
     document.getElementById("importData").addEventListener("change", importData);
+
+    document.getElementById("saveData").addEventListener("click", saveToDatabase);
+    document.getElementById("loadData").addEventListener("click", loadFromDatabase);
+
+    initDatabase();
 });
+
+let db;
+
+// 初始化数据库
+async function initDatabase() {
+    const SQL = await initSqlJs();
+    db = new SQL.Database();
+    createTables();
+    loadFromDatabase();
+}
+
+// 创建数据库表
+function createTables() {
+    db.run(`
+        CREATE TABLE IF NOT EXISTS players (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            color TEXT,
+            totalAsset INTEGER,
+            cash INTEGER
+        );
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS bank (
+            cash INTEGER
+        );
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS history (
+            round INTEGER,
+            player_id INTEGER,
+            totalAsset INTEGER,
+            cash INTEGER
+        );
+    `);
+
+    db.run(`
+        INSERT OR IGNORE INTO bank (cash) VALUES (1000000);
+    `);
+}
+
+// 保存数据到数据库
+function saveToDatabase() {
+    db.run("DELETE FROM players");
+    db.run("DELETE FROM history");
+
+    players.forEach((player, index) => {
+        db.run(`
+            INSERT INTO players (name, color, totalAsset, cash)
+            VALUES (?, ?, ?, ?);
+        `, [player.name, player.color, player.totalAsset, player.cash]);
+    });
+
+    db.run("UPDATE bank SET cash = ?", [bank.cash]);
+
+    history.forEach(roundData => {
+        roundData.snapshot.forEach((snapshot, playerIndex) => {
+            db.run(`
+                INSERT INTO history (round, player_id, totalAsset, cash)
+                VALUES (?, ?, ?, ?);
+            `, [roundData.round, playerIndex, snapshot.totalAsset, snapshot.cash]);
+        });
+    });
+
+    alert("数据已保存到数据库");
+}
+
+// 从数据库加载数据
+function loadFromDatabase() {
+    const playersResult = db.exec("SELECT * FROM players");
+    const bankResult = db.exec("SELECT * FROM bank");
+    const historyResult = db.exec("SELECT * FROM history");
+
+    if (playersResult.length > 0) {
+        players = playersResult[0].values.map(row => ({
+            name: row[1],
+            color: row[2],
+            totalAsset: row[3],
+            cash: row[4]
+        }));
+        updatePlayersDisplay();
+    }
+
+    if (bankResult.length > 0) {
+        bank.cash = bankResult[0].values[0][0];
+    }
+
+    if (historyResult.length > 0) {
+        history = [];
+        let currentRound = -1;
+        historyResult[0].values.forEach(row => {
+            if (row[0] !== currentRound) {
+                history.push({ round: row[0], snapshot: [] });
+                currentRound = row[0];
+            }
+            history[history.length - 1].snapshot[row[1]] = { totalAsset: row[2], cash: row[3] };
+        });
+    }
+
+    updateCharts();
+}
 
 // 初始化玩家信息
 function initializePlayers() {
