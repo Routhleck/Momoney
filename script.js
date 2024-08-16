@@ -1,4 +1,3 @@
-// 玩家信息
 let players = [
     { name: "玩家1", color: "", totalAsset: 0, cash: 0 },
     { name: "玩家2", color: "", totalAsset: 0, cash: 0 },
@@ -11,8 +10,8 @@ let players = [
 let bank = { name: "银行", cash: 1000000 };
 let round = 0;
 let history = [];
+let assetChart, cashChart;
 
-// 初始化页面
 document.addEventListener("DOMContentLoaded", function () {
     initializePlayers();
     updatePlayerSelectors();
@@ -27,7 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("importData").addEventListener("change", importData);
 });
 
-// 初始化玩家信息
 function initializePlayers() {
     const playerContainer = document.getElementById("players");
     playerContainer.innerHTML = "";
@@ -50,15 +48,26 @@ function initializePlayers() {
 
         playerContainer.appendChild(playerDiv);
     });
+    document.getElementById("playerFromButton0").style.backgroundColor = players[0].color;
+    document.getElementById("playerFromButton1").style.backgroundColor = players[1].color;
+    document.getElementById("playerFromButton2").style.backgroundColor = players[2].color;
+    document.getElementById("playerFromButton3").style.backgroundColor = players[3].color;
+    document.getElementById("playerFromButton4").style.backgroundColor = players[4].color;
+    document.getElementById("playerFromButton5").style.backgroundColor = players[5].color;
+
+    document.getElementById("playerToButton0").style.backgroundColor = players[0].color;
+    document.getElementById("playerToButton1").style.backgroundColor = players[1].color;
+    document.getElementById("playerToButton2").style.backgroundColor = players[2].color;
+    document.getElementById("playerToButton3").style.backgroundColor = players[3].color;
+    document.getElementById("playerToButton4").style.backgroundColor = players[4].color;
+    document.getElementById("playerToButton5").style.backgroundColor = players[5].color;
 }
 
-// 更新玩家昵称
 function updatePlayerName(index, name) {
     players[index].name = name;
     updatePlayerSelectors();
 }
 
-// 更新玩家选择框
 function updatePlayerSelectors() {
     const fromPlayer = document.getElementById("fromPlayer");
     const toPlayer = document.getElementById("toPlayer");
@@ -79,25 +88,39 @@ function updatePlayerSelectors() {
         toPlayer.appendChild(option2);
     });
 
+    // Add bank options
     let bankOption1 = document.createElement("option");
-    bankOption1.value = "bank";
+    bankOption1.value = "6";
     bankOption1.textContent = bank.name;
     fromPlayer.appendChild(bankOption1);
 
     let bankOption2 = document.createElement("option");
-    bankOption2.value = "bank";
+    bankOption2.value = "6";
     bankOption2.textContent = bank.name;
     toPlayer.appendChild(bankOption2);
+
+    document.getElementById("playerFromButton0").textContent = players[0].name;
+    document.getElementById("playerFromButton1").textContent = players[1].name;
+    document.getElementById("playerFromButton2").textContent = players[2].name;
+    document.getElementById("playerFromButton3").textContent = players[3].name;
+    document.getElementById("playerFromButton4").textContent = players[4].name;
+    document.getElementById("playerFromButton5").textContent = players[5].name;
+
+    document.getElementById("playerToButton0").textContent = players[0].name;
+    document.getElementById("playerToButton1").textContent = players[1].name;
+    document.getElementById("playerToButton2").textContent = players[2].name;
+    document.getElementById("playerToButton3").textContent = players[3].name;
+    document.getElementById("playerToButton4").textContent = players[4].name;
+    document.getElementById("playerToButton5").textContent = players[5].name;
 }
 
-// 显示初始化现金弹窗
 function showInitModal() {
     const modal = document.getElementById("initModal");
     const initPlayersCash = document.getElementById("initPlayersCash");
-
     initPlayersCash.innerHTML = "";
+
     players.forEach((player, index) => {
-        let cashInput = document.createElement("div");
+        const cashInput = document.createElement("div");
         cashInput.innerHTML = `
             <label>${player.name} 初始现金:</label>
             <input type="number" id="cash_${index}" value="${player.cash}">
@@ -108,27 +131,31 @@ function showInitModal() {
     modal.style.display = "flex";
 }
 
-// 初始化现金
 function initializeCash() {
     players.forEach((player, index) => {
-        let cash = document.getElementById(`cash_${index}`).value;
-        player.cash = parseInt(cash);
+        let cash = parseInt(document.getElementById(`cash_${index}`).value);
+        player.cash = isNaN(cash) ? 0 : cash;
         player.totalAsset = player.cash;
     });
 
+    round = 1;
+    history = [];
+    saveHistory();
+    updateCharts();
+
+    document.getElementById("roundDisplay").textContent = "轮次: " + round;
     const modal = document.getElementById("initModal");
     modal.style.display = "none";
     updatePlayersDisplay();
 }
 
-// 进行下一轮
 function nextRound() {
     round++;
     saveHistory();
     updateCharts();
+    document.getElementById("roundDisplay").textContent = "轮次: " + round;
 }
 
-// 转账操作
 function transferMoney() {
     const fromIndex = document.getElementById("fromPlayer").value;
     const toIndex = document.getElementById("toPlayer").value;
@@ -139,30 +166,36 @@ function transferMoney() {
         return;
     }
 
-    if (fromIndex === "bank") {
+    let logMessage = "";
+
+    if (fromIndex === "6") {
         bank.cash -= amount;
         players[toIndex].cash += amount;
         players[toIndex].totalAsset += amount;
-    } else if (toIndex === "bank") {
+        logMessage = `银行给 ${players[toIndex].name} 转账 ${amount}`;
+    } else if (toIndex === "6") {
         players[fromIndex].cash -= amount;
         players[fromIndex].totalAsset -= amount;
         bank.cash += amount;
+        logMessage = `${players[fromIndex].name} 给银行转账 ${amount}`;
     } else {
         players[fromIndex].cash -= amount;
         players[fromIndex].totalAsset -= amount;
         players[toIndex].cash += amount;
         players[toIndex].totalAsset += amount;
+        logMessage = `${players[fromIndex].name} 给 ${players[toIndex].name} 转账 ${amount}`;
     }
 
+    addLog(logMessage);
     updatePlayersDisplay();
+
 }
 
-// 购买资产
 function buyFromBank() {
     const toIndex = document.getElementById("toPlayer").value;
     const amount = parseInt(document.getElementById("amount").value);
 
-    if (toIndex === "bank" || isNaN(amount) || amount <= 0) {
+    if (toIndex === "6" || isNaN(amount) || amount <= 0) {
         alert("请选择有效的玩家并输入有效金额！");
         return;
     }
@@ -170,15 +203,15 @@ function buyFromBank() {
     players[toIndex].cash -= amount;
     players[toIndex].totalAsset += amount;
 
+    addLog(`${players[toIndex].name} 从银行购买资产 ${amount}`);
     updatePlayersDisplay();
 }
 
-// 抵押资产
 function mortgageAsset() {
     const fromIndex = document.getElementById("fromPlayer").value;
     const amount = parseInt(document.getElementById("amount").value);
 
-    if (fromIndex === "bank" || isNaN(amount) || amount <= 0) {
+    if (fromIndex === "6" || isNaN(amount) || amount <= 0) {
         alert("请选择有效的玩家并输入有效金额！");
         return;
     }
@@ -186,10 +219,17 @@ function mortgageAsset() {
     players[fromIndex].cash += amount;
     players[fromIndex].totalAsset -= amount;
 
+    addLog(`${players[fromIndex].name} 向银行抵押资产 ${amount}`);
     updatePlayersDisplay();
 }
 
-// 更新玩家显示信息
+function addLog(message) {
+    const logList = document.getElementById("logList");
+    const logEntry = document.createElement("li");
+    logEntry.textContent = message;
+    logList.appendChild(logEntry);
+}
+
 function updatePlayersDisplay() {
     const playerDivs = document.querySelectorAll(".player");
 
@@ -200,7 +240,6 @@ function updatePlayersDisplay() {
     });
 }
 
-// 保存当前回合数据
 function saveHistory() {
     const snapshot = players.map(player => ({
         totalAsset: player.totalAsset,
@@ -213,15 +252,17 @@ function saveHistory() {
     });
 }
 
-// 更新折线图
 function updateCharts() {
-    const assetData = history.map((h, round) => ({
-        round: round + 1,
+    if (assetChart) assetChart.destroy();
+    if (cashChart) cashChart.destroy();
+
+    const assetData = history.map(h => ({
+        round: h.round,
         values: h.snapshot.map(s => s.totalAsset)
     }));
 
-    const cashData = history.map((h, round) => ({
-        round: round + 1,
+    const cashData = history.map(h => ({
+        round: h.round,
         values: h.snapshot.map(s => s.cash)
     }));
 
@@ -229,19 +270,30 @@ function updateCharts() {
     renderChart('cashChart', '现金', cashData);
 }
 
-// 渲染折线图
 function renderChart(canvasId, label, data) {
     const ctx = document.getElementById(canvasId).getContext('2d');
+    let chart; // 声明一个变量来存储新的 Chart 实例
+
+    // 检查是否已经有 Chart 实例存在，并销毁它
+    if (canvasId === 'assetChart' && assetChart) {
+        assetChart.destroy();
+    } else if (canvasId === 'cashChart' && cashChart) {
+        cashChart.destroy();
+    }
+
     const labels = data.map(d => `第${d.round}轮`);
 
     const datasets = players.map((player, index) => ({
         label: player.name,
         data: data.map(d => d.values[index]),
         borderColor: player.color,
-        fill: false
+        backgroundColor: 'rgba(0,0,0,0)', // 设置为完全透明，不填充区域
+        borderWidth: 2, // 可以根据需要调整线条粗细
+        fill: false // 确保不填充区域
     }));
 
-    new Chart(ctx, {
+    // 创建新的 Chart 实例并赋值给相应的变量
+    chart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -253,12 +305,30 @@ function renderChart(canvasId, label, data) {
                 y: {
                     beginAtZero: true
                 }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
+                        }
+                    }
+                }
             }
         }
     });
+
+    // 根据 canvasId 将 chart 实例赋值给 assetChart 或 cashChart
+    if (canvasId === 'assetChart') {
+        assetChart = chart;
+    } else if (canvasId === 'cashChart') {
+        cashChart = chart;
+    }
 }
 
-// 导出数据
 function exportData() {
     const jsonData = JSON.stringify(history);
     const blob = new Blob([jsonData], { type: "application/json" });
@@ -272,7 +342,6 @@ function exportData() {
     URL.revokeObjectURL(url);
 }
 
-// 导入数据
 function importData(event) {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -280,9 +349,10 @@ function importData(event) {
     reader.onload = function (e) {
         const jsonData = e.target.result;
         history = JSON.parse(jsonData);
-        round = history.length;
+        round = history.length + 1;
+        document.getElementById("roundDisplay").textContent = "轮次: " + round;
 
-        history.forEach((roundData, roundIndex) => {
+        history.forEach(roundData => {
             players.forEach((player, index) => {
                 player.totalAsset = roundData.snapshot[index].totalAsset;
                 player.cash = roundData.snapshot[index].cash;
@@ -294,4 +364,21 @@ function importData(event) {
     };
 
     reader.readAsText(file);
+}
+
+// 设置玩家为转出方
+function setPlayerAsFrom(playerIndex) {
+    const fromPlayerSelect = document.getElementById('fromPlayer');
+    fromPlayerSelect.value = playerIndex;
+}
+
+// 设置玩家为转入方
+function setPlayerAsTo(playerIndex) {
+    const toPlayerSelect = document.getElementById('toPlayer');
+    toPlayerSelect.value = playerIndex;
+}
+
+// 设置交易金额
+function setAmount(amount) {
+    document.getElementById('amount').value = amount;
 }
