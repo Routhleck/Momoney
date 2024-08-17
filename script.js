@@ -343,13 +343,33 @@ function renderChart(canvasId, label, data) {
 }
 
 function exportData() {
-    const jsonData = JSON.stringify(history);
-    const blob = new Blob([jsonData], { type: "application/json" });
+    const exportData = JSON.stringify({
+        players: players.map(player => ({
+            name: player.name,
+            totalAsset: player.totalAsset,
+            cash: player.cash
+        })),
+        history: history
+    });
+    
+    const blob = new Blob([exportData], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "game_data.json";
+
+    const now = new Date();
+    // game_data_YYYYMMDD_HHMM的格式
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 月份从0开始，所以需要+1
+    const day = now.getDate().toString().padStart(2, '0');
+    const hour = now.getHours().toString().padStart(2, '0');
+    const minute = now.getMinutes().toString().padStart(2, '0');
+
+    // 拼接日期时间字符串
+    const dateString = `${year}${month}${day}_${hour}${minute}`;
+
+    a.download = `game_data_${dateString}.json`;
     a.click();
 
     URL.revokeObjectURL(url);
@@ -361,17 +381,44 @@ function importData(event) {
 
     reader.onload = function (e) {
         const jsonData = e.target.result;
-        history = JSON.parse(jsonData);
-        round = history.length + 1;
-        document.getElementById("roundDisplay").textContent = "轮次: " + round;
+        const importedData = JSON.parse(jsonData);
 
-        history.forEach(roundData => {
-            players.forEach((player, index) => {
-                player.totalAsset = roundData.snapshot[index].totalAsset;
-                player.cash = roundData.snapshot[index].cash;
-            });
+        const playerContainer = document.getElementById("players");
+
+        importedData.players.forEach((playerData, index) => {
+            players[index].name = playerData.name;
+            players[index].totalAsset = playerData.totalAsset;
+            players[index].cash = playerData.cash;
         });
 
+        playerContainer.innerHTML = "";
+        players.forEach((player, index) => {
+            let playerDiv = document.createElement("div");
+            playerDiv.className = "player";
+            playerDiv.style.backgroundColor = player.color;
+
+            playerDiv.innerHTML = `
+                <input type="text" value="${player.name}" onblur="updatePlayerName(${index}, this.value)">
+                <p>总资产: <span class="totalAsset">${player.totalAsset}</span></p>
+                <p>现金: <span class="cash">${player.cash}</span></p>
+            `;
+
+            playerContainer.appendChild(playerDiv);
+        });
+        
+        history = importedData.history;
+        round = history.length;
+
+        document.getElementById("roundDisplay").textContent = "轮次: " + round;
+
+        // history.forEach(roundData => {
+        //     players.forEach((player, index) => {
+        //         player.totalAsset = roundData.snapshot[index].totalAsset;
+        //         player.cash = roundData.snapshot[index].cash;
+        //     });
+        // });
+
+        updatePlayerSelectors();
         updatePlayersDisplay();
         updateCharts();
     };
