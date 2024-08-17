@@ -57,7 +57,7 @@ export function renderChart(canvasId, label, data) {
             responsive: true,
             scales: {
                 y: {
-                    beginAtZero: true,
+                    beginAtZero: false,
                     ticks: {
                         min: minY - extraPadding,
                         max: maxY + extraPadding,
