@@ -316,7 +316,7 @@ function renderChart(canvasId, label, data) {
             responsive: true,
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: false
                 }
             },
             plugins: {
