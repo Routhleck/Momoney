@@ -12,7 +12,8 @@ export function initializeCash() {
     });
 
     updateRound(1);
-    history = [];
+    let newHistory = [];
+    updateHistory(newHistory);
     saveHistory();
     updateCharts();
 

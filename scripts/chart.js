@@ -30,6 +30,11 @@ export function renderChart(canvasId, label, data) {
         cashChart.destroy();
     }
 
+    const maxY = Math.ceil(Math.max(...data.map(d => Math.max(...d.values))));
+    const minY = Math.floor(Math.min(...data.map(d => Math.min(...d.values))));
+    const range = maxY - minY;
+    const extraPadding = range * 0.1; // 添加10%的额外空间
+
     const labels = data.map(d => `第${d.round}轮`);
 
     const datasets = players.map((player, index) => ({
@@ -52,7 +57,15 @@ export function renderChart(canvasId, label, data) {
             responsive: true,
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    ticks: {
+                        min: minY - extraPadding,
+                        max: maxY + extraPadding,
+                        callback: function(value, index, values) {
+                            // 自定义刻度标签的格式，如果需要的话
+                            return value;
+                        }
+                    }
                 }
             },
             plugins: {
