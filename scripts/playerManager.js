@@ -7,17 +7,22 @@ export function initializePlayers() {
 
     players.forEach((player, index) => {
         player.color = colors[index];
-        player.totalAsset = 50000;
-        player.cash = 50000;
+        player.totalAsset = 15000;
+        player.cash = 15000;
 
         let playerDiv = document.createElement("div");
         playerDiv.className = "player";
         playerDiv.style.backgroundColor = player.color;
 
+        let totalAsset_M = Math.floor(player.totalAsset / 1000);
+        let cash_M = player.cash / 1000;
+        let totalAsset_K = Math.floor(player.totalAsset % 1000);
+        let cash_K = player.cash % 1000;
+
         playerDiv.innerHTML = `
             <input type="text" value="${player.name}" onblur="updatePlayerName(${index}, this.value)">
-            <p>总资产: <span class="totalAsset">${player.totalAsset}</span></p>
-            <p>现金: <span class="cash">${player.cash}</span></p>
+            <p>总资产: <span class="totalAsset">\$${totalAsset_M}M ${totalAsset_K}k</span></p>
+            <p>现金: <span class="cash">\$${cash_M}M ${cash_K}k</span></p>
         `;
 
         playerContainer.appendChild(playerDiv);
@@ -35,6 +40,20 @@ export function initializePlayers() {
     document.getElementById("playerToButton3").style.backgroundColor = players[3].color;
     document.getElementById("playerToButton4").style.backgroundColor = players[4].color;
     document.getElementById("playerToButton5").style.backgroundColor = players[5].color;
+
+    document.getElementById("playerBuyAssetButton0").style.backgroundColor = players[0].color;
+    document.getElementById("playerBuyAssetButton1").style.backgroundColor = players[1].color;
+    document.getElementById("playerBuyAssetButton2").style.backgroundColor = players[2].color;
+    document.getElementById("playerBuyAssetButton3").style.backgroundColor = players[3].color;
+    document.getElementById("playerBuyAssetButton4").style.backgroundColor = players[4].color;
+    document.getElementById("playerBuyAssetButton5").style.backgroundColor = players[5].color;
+
+    document.getElementById("playerMortgageButton0").style.backgroundColor = players[0].color;
+    document.getElementById("playerMortgageButton1").style.backgroundColor = players[1].color;
+    document.getElementById("playerMortgageButton2").style.backgroundColor = players[2].color;
+    document.getElementById("playerMortgageButton3").style.backgroundColor = players[3].color;
+    document.getElementById("playerMortgageButton4").style.backgroundColor = players[4].color;
+    document.getElementById("playerMortgageButton5").style.backgroundColor = players[5].color;
 }
 
 export function updatePlayerName(index, name) {
@@ -88,6 +107,20 @@ export function updatePlayerSelectors() {
     document.getElementById("playerToButton3").textContent = players[3].name;
     document.getElementById("playerToButton4").textContent = players[4].name;
     document.getElementById("playerToButton5").textContent = players[5].name;
+
+    document.getElementById("playerBuyAssetButton0").textContent = players[0].name;
+    document.getElementById("playerBuyAssetButton1").textContent = players[1].name;
+    document.getElementById("playerBuyAssetButton2").textContent = players[2].name;
+    document.getElementById("playerBuyAssetButton3").textContent = players[3].name;
+    document.getElementById("playerBuyAssetButton4").textContent = players[4].name;
+    document.getElementById("playerBuyAssetButton5").textContent = players[5].name;
+
+    document.getElementById("playerMortgageButton0").textContent = players[0].name;
+    document.getElementById("playerMortgageButton1").textContent = players[1].name;
+    document.getElementById("playerMortgageButton2").textContent = players[2].name;
+    document.getElementById("playerMortgageButton3").textContent = players[3].name;
+    document.getElementById("playerMortgageButton4").textContent = players[4].name;
+    document.getElementById("playerMortgageButton5").textContent = players[5].name;
 }
 
 export function updatePlayersDisplay() {
@@ -95,7 +128,11 @@ export function updatePlayersDisplay() {
 
     players.forEach((player, index) => {
         const playerDiv = playerDivs[index];
-        playerDiv.querySelector(".totalAsset").textContent = player.totalAsset;
-        playerDiv.querySelector(".cash").textContent = player.cash;
+        let totalAsset_M = Math.floor(player.totalAsset / 1000);
+        let cash_M = Math.floor(player.cash / 1000);
+        let totalAsset_K = player.totalAsset % 1000;
+        let cash_K = player.cash % 1000;
+        playerDiv.querySelector(".totalAsset").textContent = `$${totalAsset_M}M ${totalAsset_K}k`;
+        playerDiv.querySelector(".cash").textContent = `$${cash_M}M ${cash_K}k`;
     });
 }
