@@ -1,4 +1,4 @@
-import {initializePlayers, updatePlayerName, updatePlayerSelectors, updatePlayersDisplay} from './scripts/playerManager.js';
+import {initializePlayers, initializePlayersWithCache, updatePlayerName, updatePlayerSelectors, updatePlayersDisplay} from './scripts/playerManager.js';
 import {showInitModal, openModal, closeModal, closeModals} from './scripts/modelManager.js';
 import {initializeCash, nextRound, transferMoney, 
     setPlayerAsFrom, setPlayerAsTo, setAmount, 
@@ -23,8 +23,16 @@ export var round = 0;
 export var history = [];
 export var assetChart, cashChart;
 
+let loadSucess = false;
+
 document.addEventListener("DOMContentLoaded", function () {
-    initializePlayers();
+    loadFromLocalStorage()
+    if (loadSucess) {
+        initializePlayersWithCache();
+    }
+    else {
+        initializePlayers();
+    }
     document.getElementById("initialize").addEventListener("click", showInitModal);
     document.getElementById("confirmInit").addEventListener("click", initializeCash);
     document.getElementById("nextRound").addEventListener("click", nextRound);
@@ -36,18 +44,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 export function updatePlayers(newPlayers) {
     players = newPlayers;
+    saveToLocalStorage();
 }
 
 export function updateBank(newBank) {
     bank = newBank;
+    saveToLocalStorage();
 }
 
 export function updateRound(newRound) {
     round = newRound;
+    saveToLocalStorage();
 }
 
 export function updateHistory(newHistory) {
     history = newHistory;
+    saveToLocalStorage();
 }
 
 export function updateAssetChart(newAssetChart) {
@@ -56,6 +68,28 @@ export function updateAssetChart(newAssetChart) {
 
 export function updateCashChart(newCashChart) {
     cashChart = newCashChart;
+}
+
+export function saveToLocalStorage() {
+    const data = {
+        players,
+        bank,
+        round,
+        history
+    }
+    localStorage.setItem('gameData', JSON.stringify(data))
+}
+
+export function loadFromLocalStorage() {
+    const data = localStorage.getItem('gameData');
+    if (data) {
+        const { players: savedPlayers, bank: savedBank, round: savedRound, history: savedHistory } = JSON.parse(data);
+        players = savedPlayers;
+        bank = savedBank;
+        round = savedRound;
+        history = savedHistory;
+        loadSucess = true;
+    }
 }
 
 window.setPlayerAsFrom = setPlayerAsFrom;
