@@ -63,7 +63,7 @@ export function renderChart(canvasId, label, data) {
                         max: maxY + extraPadding,
                         callback: function(value, index, values) {
                             // 自定义刻度标签的格式，如果需要的话
-                            return value;
+                            return value >= 1000 ? (value / 1000).toFixed(1) + 'M' : value + 'k';
                         }
                     }
                 }

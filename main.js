@@ -1,6 +1,9 @@
 import {initializePlayers, updatePlayerName, updatePlayerSelectors, updatePlayersDisplay} from './scripts/playerManager.js';
 import {showInitModal, openModal, closeModal, closeModals} from './scripts/modelManager.js';
-import {initializeCash, nextRound, transferMoney, setPlayerAsFrom, setPlayerAsTo, setAmount, buyAsset, mortgageAsset} from './scripts/transaction.js';
+import {initializeCash, nextRound, transferMoney, 
+    setPlayerAsFrom, setPlayerAsTo, setAmount, 
+    buyAsset, mortgageAsset, setPlayerBuyAsset, 
+    setAmountBuyAsset, setPlayerMortgage, setMortgageOriginalPrice, setMortgagePrice} from './scripts/transaction.js';
 import {updateCharts, renderChart} from './scripts/chart.js';
 import {addLog} from './scripts/logManager.js';
 import {exportData, importData} from './scripts/dataIO.js';
@@ -63,3 +66,9 @@ window.openModal = openModal;
 window.closeModal = closeModal;
 window.buyAsset = buyAsset;
 window.mortgageAsset = mortgageAsset;
+window.updatePlayerName = updatePlayerName;
+window.setPlayerBuyAsset = setPlayerBuyAsset;
+window.setAmountBuyAsset = setAmountBuyAsset;
+window.setPlayerMortgage = setPlayerMortgage;
+window.setMortgageOriginalPrice = setMortgageOriginalPrice;
+window.setMortgagePrice = setMortgagePrice;

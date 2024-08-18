@@ -3,10 +3,17 @@ import { addLog } from "./logManager.js";
 import { updatePlayersDisplay } from "./playerManager.js";
 import { updateCharts } from "./chart.js";
 
+let fromPlayerIndex = 0;
+let ToPlayerIndex = 0;
+let transferAmount = 0;
+let buyAssetPlayerIndex = 0;
+let mortgagePlayerIndex = 0;
 
 export function initializeCash() {
     players.forEach((player, index) => {
-        let cash = parseInt(document.getElementById(`cash_${index}`).value);
+        let cash_M = parseInt(document.getElementById(`cash_M_${index}`).value);
+        let cash_k = parseInt(document.getElementById(`cash_k_${index}`).value);
+        let cash = cash_M * 1000 + cash_k;
         player.cash = isNaN(cash) ? 0 : cash;
         player.totalAsset = player.cash;
     });
@@ -34,9 +41,12 @@ export function nextRound() {
 }
 
 export function transferMoney() {
-    const fromIndex = document.getElementById("fromPlayer").value;
-    const toIndex = document.getElementById("toPlayer").value;
-    const amount = parseInt(document.getElementById("amount").value);
+    const fromIndex = fromPlayerIndex;
+    const toIndex = ToPlayerIndex;
+    transferAmount = parseInt(document.getElementById("amount_M").value) * 1000 + parseInt(document.getElementById("amount_k").value);
+    const amount_M = Math.floor(transferAmount / 1000);
+    const amount_k = transferAmount % 1000;
+    const amount = transferAmount;
 
     if (fromIndex === toIndex || isNaN(amount) || amount <= 0) {
         alert("请选择有效的玩家并输入有效金额！");
@@ -55,7 +65,7 @@ export function transferMoney() {
         newPlayers[toIndex].totalAsset += amount;
         updatePlayers(newPlayers);
 
-        logMessage = `银行给 ${players[toIndex].name} 转账 ${amount}`;
+        logMessage = `银行给 ${players[toIndex].name} 转账 $${amount_M}M ${amount_k}k`;
     } else if (toIndex === "6") {
         let newBank = { ...bank };
         newBank.cash += amount;
@@ -66,7 +76,7 @@ export function transferMoney() {
         newPlayers[fromIndex].totalAsset -= amount;
         updatePlayers(newPlayers);
 
-        logMessage = `${players[fromIndex].name} 给银行转账 ${amount}`;
+        logMessage = `${players[fromIndex].name} 给银行转账 $${amount_M}M ${amount_k}k`;
     } else {
         let newPlayers = [...players];
         newPlayers[fromIndex].cash -= amount;
@@ -75,7 +85,7 @@ export function transferMoney() {
         newPlayers[toIndex].totalAsset += amount;
         updatePlayers(newPlayers);
         
-        logMessage = `${players[fromIndex].name} 给 ${players[toIndex].name} 转账 ${amount}`;
+        logMessage = `${players[fromIndex].name} 给 ${players[toIndex].name} 转账 $${amount_M} M${amount_k}k`;
     }
 
     addLog(logMessage);
@@ -113,25 +123,64 @@ export function saveHistory() {
 export function setPlayerAsFrom(playerIndex) {
     const fromPlayerSelect = document.getElementById('fromPlayer');
     fromPlayerSelect.value = playerIndex;
+    fromPlayerIndex = playerIndex;
 }
 
 // 设置玩家为转入方
 export function setPlayerAsTo(playerIndex) {
     const toPlayerSelect = document.getElementById('toPlayer');
     toPlayerSelect.value = playerIndex;
+    ToPlayerIndex = playerIndex;
 }
 
 // 设置交易金额
 export function setAmount(amount) {
-    document.getElementById('amount').value = amount;
+    let amount_M = Math.floor(amount / 1000);
+    let amount_k = amount % 1000;
+    document.getElementById('amount_M').value = amount_M;
+    document.getElementById('amount_k').value = amount_k;
+    transferAmount = amount;
 }
 
+export function setPlayerBuyAsset(playerIndex) {
+    const buyAssetPlayer = document.getElementById('buyAssetPlayerLabel');
+    buyAssetPlayer.textContent = "购买方: " + players[playerIndex].name;
+    buyAssetPlayerIndex = playerIndex;
+}
 
+export function setAmountBuyAsset(amount) {
+    let amount_M = Math.floor(amount / 1000);
+    let amount_k = amount % 1000;
+    document.getElementById('buyAmount_M').value = amount_M;
+    document.getElementById('buyAmount_k').value = amount_k;
+}
+
+export function setPlayerMortgage(playerIndex) {
+    const mortgagePlayer = document.getElementById('mortgagePlayer');
+    mortgagePlayer.textContent = "抵押方: " + players[playerIndex].name;
+    mortgagePlayerIndex = playerIndex;
+}
+
+export function setMortgageOriginalPrice(amount) {
+    let amount_M = Math.floor(amount / 1000);
+    let amount_k = amount % 1000;
+    document.getElementById('mortgageOriginalPrice_M').value = amount_M;
+    document.getElementById('mortgageOriginalPrice_k').value = amount_k;
+}
+
+export function setMortgagePrice(amount) {
+    let amount_M = Math.floor(amount / 1000);
+    let amount_k = amount % 1000;
+    document.getElementById('mortgagePrice_M').value = amount_M;
+    document.getElementById('mortgagePrice_k').value = amount_k;
+}
 
 // 购买资产逻辑
 export function buyAsset() {
-    const toIndex = document.getElementById('fromPlayer').value;
-    const amount = parseInt(document.getElementById('buyAmount').value);
+    const toIndex = buyAssetPlayerIndex;
+    let amount_M = parseInt(document.getElementById('buyAmount_M').value);
+    let amount_k = parseInt(document.getElementById('buyAmount_k').value);
+    let amount = amount_M * 1000 + amount_k;
     
     if (toIndex === 'bank' || isNaN(amount) || amount <= 0) {
         alert('请输入有效的金额');
@@ -143,7 +192,7 @@ export function buyAsset() {
     newPlayers[toIndex].cash -= amount; // 扣除现金
     updatePlayers(newPlayers);
     
-    addLog(`${players[toIndex].name} 从银行购买资产 ${amount}`);
+    addLog(`${players[toIndex].name} 从银行购买资产 \$${amount_M}M ${amount_k}k`);
     updatePlayersDisplay();
     saveHistory();
     updateCharts();
@@ -152,11 +201,20 @@ export function buyAsset() {
 
 // 资产抵押逻辑
 export function mortgageAsset() {
-    const fromIndex = document.getElementById('fromPlayer').value;
-    const originalPrice = parseInt(document.getElementById('mortgageOriginalPrice').value);
-    const mortgagePrice = parseInt(document.getElementById('mortgagePrice').value);
+    const fromIndex = mortgagePlayerIndex;
+    let originalPrice_M = parseInt(document.getElementById('mortgageOriginalPrice_M').value);
+    let originalPrice_k = parseInt(document.getElementById('mortgageOriginalPrice_k').value);
+    const originalPrice = originalPrice_M * 1000 + originalPrice_k
+
+    let mortgagePrice_M = parseInt(document.getElementById('mortgagePrice_M').value);
+    let mortgagePrice_k = parseInt(document.getElementById('mortgagePrice_k').value);
+    const mortgagePrice = mortgagePrice_M * 1000 + mortgagePrice_k
     
-    if (fromIndex === 'bank' || isNaN(originalPrice) || isNaN(mortgagePrice) || originalPrice <= 0 || mortgagePrice <= 0) {
+    if (isNaN(originalPrice) 
+        || isNaN(mortgagePrice) 
+        || originalPrice <= 0 
+        || mortgagePrice <= 0
+        || mortgagePrice > originalPrice) {
         alert('请输入有效的原价和抵押价格');
         return;
     }
@@ -169,7 +227,7 @@ export function mortgageAsset() {
 
     updatePlayers(newPlayers);
     
-    addLog(`${players[fromIndex].name} 向银行抵押资产，原价 ${originalPrice}，抵押价格 ${mortgagePrice}`);
+    addLog(`${players[fromIndex].name} 向银行抵押资产，原价 \$${originalPrice_M}M ${originalPrice_k}k，抵押价格 \$${mortgagePrice_M}M ${mortgagePrice_k}k`);
     updatePlayersDisplay();
     saveHistory();
     updateCharts();
