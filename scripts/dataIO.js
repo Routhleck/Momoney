@@ -1,4 +1,4 @@
-import {players, bank, history, updateHistory, updateRound} from "../main.js";
+import {players, bank, history, updateHistory, updateRound, saveToLocalStorage} from "../main.js";
 import { initializePlayers, updatePlayerSelectors, updatePlayersDisplay } from "./playerManager.js";
 import { updateCharts } from "./chart.js";
 
@@ -86,6 +86,7 @@ export function importData(event) {
         updatePlayerSelectors();
         updatePlayersDisplay();
         updateCharts();
+        saveToLocalStorage();
     };
 
     reader.readAsText(file);
