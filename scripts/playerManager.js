@@ -1,14 +1,46 @@
 import {players, bank, updatePlayers, updateBank} from "../main.js";
+import { setPlayerAsFrom, setPlayerAsTo, setAmount,
+    setPlayerBuyAsset, setAmountBuyAsset,
+    setPlayerMortgage, setMortgageOriginalPrice, setMortgagePrice
+ } from "./transaction.js";
+ import { updateCharts } from "./chart.js";
+
+// 顺序调用initializePlayers和updatePlayerSelectors
+document.getElementById("PlayerCount").addEventListener("change", initializePlayers);
+
 
 export function initializePlayers() {
+    const playerCount = parseInt(document.getElementById("PlayerCount").value);
+
+    const colors = ["#FF5733", "#33FF57", "#3357FF", "#F5A623", "#BD10E0", "#50E3C2", "#FF9F43", "#33FFF6", "#F533FF", "#93FF33"];
+
+    let newPlayers = [];
+
+    for (let i = 0; i < playerCount; i++) {
+        const player = {
+            name: `玩家${i + 1}`,
+            color: colors[i] || "#000000",
+            totalAsset: 15000,
+            cash: 15000
+        };
+        newPlayers.push(player);
+    }
+    updatePlayers(newPlayers);
+
+    // Create player UI elements
     const playerContainer = document.getElementById("players");
+    const transactionFromPlayerButtons = document.getElementById("transaction-from-player-button");
+    const transactionToPlayerButtons = document.getElementById("transaction-to-player-button");
+    const buyAssetFromPlayerButtons = document.getElementById("buy-asset-player-button");
+    const mortgagePlayerButtons = document.getElementById("mortgage-player-button");
     playerContainer.innerHTML = "";
-    const colors = ["#FF5733", "#33FF57", "#3357FF", "#F5A623", "#BD10E0", "#50E3C2"];
+    transactionFromPlayerButtons.innerHTML = "";
+    transactionToPlayerButtons.innerHTML = "";
+    buyAssetFromPlayerButtons.innerHTML = "";
+    mortgagePlayerButtons.innerHTML = "";
+
 
     players.forEach((player, index) => {
-        player.color = colors[index];
-        player.totalAsset = 15000;
-        player.cash = 15000;
 
         let playerDiv = document.createElement("div");
         playerDiv.className = "player";
@@ -25,35 +57,65 @@ export function initializePlayers() {
             <p>现金: <span class="cash">\$${cash_M}M ${cash_K}k</span></p>
         `;
 
+        let transactionFromPlayerButton = document.createElement("button");
+        transactionFromPlayerButton.id = `playerFromButton${index}`;
+        transactionFromPlayerButton.textContent = player.name;
+        transactionFromPlayerButton.style.backgroundColor = player.color;
+        transactionFromPlayerButton.onclick = function () {
+            setPlayerAsFrom(index);
+        }
+
+        let transactionToPlayerButton = document.createElement("button");
+        transactionToPlayerButton.id = `playerToButton${index}`;
+        transactionToPlayerButton.textContent = player.name;
+        transactionToPlayerButton.style.backgroundColor = player.color;
+        transactionToPlayerButton.onclick = function () {
+            setPlayerAsTo(index);
+        }
+
+        let buyAssetPlayerButton = document.createElement("button");
+        buyAssetPlayerButton.id = `playerBuyAssetButton${index}`;
+        buyAssetPlayerButton.textContent = player.name;
+        buyAssetPlayerButton.style.backgroundColor = player.color;
+        buyAssetPlayerButton.onclick = function () {
+            setPlayerBuyAsset(index);
+        }
+
+
+        let mortgagePlayerButton = document.createElement("button");
+        mortgagePlayerButton.id = `playerMortgageButton${index}`;
+        mortgagePlayerButton.textContent = player.name;
+        mortgagePlayerButton.style.backgroundColor = player.color;
+        mortgagePlayerButton.onclick = function () {
+            setPlayerMortgage(index);
+        }
+
         playerContainer.appendChild(playerDiv);
+        transactionFromPlayerButtons.appendChild(transactionFromPlayerButton);
+        transactionToPlayerButtons.appendChild(transactionToPlayerButton);
+        buyAssetFromPlayerButtons.appendChild(buyAssetPlayerButton);
+        mortgagePlayerButtons.appendChild(mortgagePlayerButton);
+
     });
-    document.getElementById("playerFromButton0").style.backgroundColor = players[0].color;
-    document.getElementById("playerFromButton1").style.backgroundColor = players[1].color;
-    document.getElementById("playerFromButton2").style.backgroundColor = players[2].color;
-    document.getElementById("playerFromButton3").style.backgroundColor = players[3].color;
-    document.getElementById("playerFromButton4").style.backgroundColor = players[4].color;
-    document.getElementById("playerFromButton5").style.backgroundColor = players[5].color;
 
-    document.getElementById("playerToButton0").style.backgroundColor = players[0].color;
-    document.getElementById("playerToButton1").style.backgroundColor = players[1].color;
-    document.getElementById("playerToButton2").style.backgroundColor = players[2].color;
-    document.getElementById("playerToButton3").style.backgroundColor = players[3].color;
-    document.getElementById("playerToButton4").style.backgroundColor = players[4].color;
-    document.getElementById("playerToButton5").style.backgroundColor = players[5].color;
+    // Create bank UI element
+    let transactionFromPlayerButton = document.createElement("button");
+    transactionFromPlayerButton.id = `playerFromButton${playerCount}`;
+    transactionFromPlayerButton.textContent = bank.name;
+    transactionFromPlayerButton.style.backgroundColor = bank.color;
+    transactionFromPlayerButton.onclick = setPlayerAsFrom(playerCount);
 
-    document.getElementById("playerBuyAssetButton0").style.backgroundColor = players[0].color;
-    document.getElementById("playerBuyAssetButton1").style.backgroundColor = players[1].color;
-    document.getElementById("playerBuyAssetButton2").style.backgroundColor = players[2].color;
-    document.getElementById("playerBuyAssetButton3").style.backgroundColor = players[3].color;
-    document.getElementById("playerBuyAssetButton4").style.backgroundColor = players[4].color;
-    document.getElementById("playerBuyAssetButton5").style.backgroundColor = players[5].color;
+    let transactionToPlayerButton = document.createElement("button");
+    transactionToPlayerButton.id = `playerToButton${playerCount}`;
+    transactionToPlayerButton.textContent = bank.name;
+    transactionToPlayerButton.style.backgroundColor = bank.color;
+    transactionToPlayerButton.onclick = setPlayerAsTo(playerCount);
 
-    document.getElementById("playerMortgageButton0").style.backgroundColor = players[0].color;
-    document.getElementById("playerMortgageButton1").style.backgroundColor = players[1].color;
-    document.getElementById("playerMortgageButton2").style.backgroundColor = players[2].color;
-    document.getElementById("playerMortgageButton3").style.backgroundColor = players[3].color;
-    document.getElementById("playerMortgageButton4").style.backgroundColor = players[4].color;
-    document.getElementById("playerMortgageButton5").style.backgroundColor = players[5].color;
+    transactionFromPlayerButtons.appendChild(transactionFromPlayerButton);
+    transactionToPlayerButtons.appendChild(transactionToPlayerButton);
+    updatePlayerSelectors();
+
+    updateCharts();
 }
 
 export function updatePlayerName(index, name) {
@@ -64,6 +126,7 @@ export function updatePlayerName(index, name) {
 }
 
 export function updatePlayerSelectors() {
+    const playerCount = parseInt(document.getElementById("PlayerCount").value);
     const fromPlayer = document.getElementById("fromPlayer");
     const toPlayer = document.getElementById("toPlayer");
 
@@ -81,46 +144,23 @@ export function updatePlayerSelectors() {
 
         fromPlayer.appendChild(option1);
         toPlayer.appendChild(option2);
+
+        document.getElementById(`playerFromButton${index}`).textContent = player.name;
+        document.getElementById(`playerToButton${index}`).textContent = player.name;
+        document.getElementById(`playerBuyAssetButton${index}`).textContent = player.name;
+        document.getElementById(`playerMortgageButton${index}`).textContent = player.name;
     });
 
     // Add bank options
     let bankOption1 = document.createElement("option");
-    bankOption1.value = "6";
+    bankOption1.value = playerCount;
     bankOption1.textContent = bank.name;
     fromPlayer.appendChild(bankOption1);
 
     let bankOption2 = document.createElement("option");
-    bankOption2.value = "6";
+    bankOption2.value = playerCount;
     bankOption2.textContent = bank.name;
     toPlayer.appendChild(bankOption2);
-
-    document.getElementById("playerFromButton0").textContent = players[0].name;
-    document.getElementById("playerFromButton1").textContent = players[1].name;
-    document.getElementById("playerFromButton2").textContent = players[2].name;
-    document.getElementById("playerFromButton3").textContent = players[3].name;
-    document.getElementById("playerFromButton4").textContent = players[4].name;
-    document.getElementById("playerFromButton5").textContent = players[5].name;
-
-    document.getElementById("playerToButton0").textContent = players[0].name;
-    document.getElementById("playerToButton1").textContent = players[1].name;
-    document.getElementById("playerToButton2").textContent = players[2].name;
-    document.getElementById("playerToButton3").textContent = players[3].name;
-    document.getElementById("playerToButton4").textContent = players[4].name;
-    document.getElementById("playerToButton5").textContent = players[5].name;
-
-    document.getElementById("playerBuyAssetButton0").textContent = players[0].name;
-    document.getElementById("playerBuyAssetButton1").textContent = players[1].name;
-    document.getElementById("playerBuyAssetButton2").textContent = players[2].name;
-    document.getElementById("playerBuyAssetButton3").textContent = players[3].name;
-    document.getElementById("playerBuyAssetButton4").textContent = players[4].name;
-    document.getElementById("playerBuyAssetButton5").textContent = players[5].name;
-
-    document.getElementById("playerMortgageButton0").textContent = players[0].name;
-    document.getElementById("playerMortgageButton1").textContent = players[1].name;
-    document.getElementById("playerMortgageButton2").textContent = players[2].name;
-    document.getElementById("playerMortgageButton3").textContent = players[3].name;
-    document.getElementById("playerMortgageButton4").textContent = players[4].name;
-    document.getElementById("playerMortgageButton5").textContent = players[5].name;
 }
 
 export function updatePlayersDisplay() {
