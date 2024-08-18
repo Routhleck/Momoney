@@ -8,11 +8,11 @@ export function showInitModal() {
     players.forEach((player, index) => {
         const cashInput = document.createElement("div");
         cashInput.innerHTML = `
-            <label>${player.name} 初始现金: $</label>
-            <input type="number" id="cash_M_${index}" value="15">
-            <label>M</label>
-            <input type="number" id="cash_k_${index}" value="0">
-            <label>K</label>
+            <label style="font-size=20px">${player.name} 初始现金: $</label>
+            <input type="number" id="cash_M_${index}" style="font-size=20px" value="15">
+            <label style="font-size=20px">M</label>
+            <input type="number" id="cash_k_${index}" style="font-size=20px" value="0">
+            <label style="font-size=20px">K</label>
         `;
         initPlayersCash.appendChild(cashInput);
     });

@@ -7,195 +7,220 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>大富翁财富记录</h1>
-        <label for="PlayerCount">选择玩家数量 (2-10):</label>
-        <select id="PlayerCount">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6" selected>6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-        </select>
-        <div id="players" class="players-container">
-            <!-- 玩家信息将通过JS动态生成 -->
+    <div class="players-controls-container">
+        <div class="section players-container">
+            <div id="players" class="players-container">
+                <!-- 玩家信息将通过JS动态生成 -->
+            </div>
         </div>
-        <div class="controls">
-            <button id="initialize" class="btn-primary">初始化现金</button>
-            <button id="nextRound" class="btn-primary">下一轮</button>
+    
+        <div class="section controls">
+            <div class="section-title">控制面板</div>
+            <label class="PlayerCountLabel" for="PlayerCount">选择玩家数量 (2-10):</label>
+            <select id="PlayerCount">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6" selected>6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <div id="roundDisplay" class="roundDisplay">轮次: 0</div>
+            <div class="button-row">
+                <button id="initialize" class="btn-primary">初始化现金</button>
+                <button id="nextRound" class="btn-primary">下一轮</button>
+                <button id="importDataButton" class="btn-secondary">导入数据</button>
+                <button id="exportData" class="btn-secondary">导出数据</button>
+            </div>
             <input type="file" id="importData" style="display:none;">
-            <button id="importDataButton" class="btn-secondary">导入数据</button>
-            <button id="exportData" class="btn-secondary">导出数据</button>
         </div>
-        <div class="transaction">
-            <h2>交易操作</h2>
+    </div>
+    
+    <div class="section transaction">
+        <div class="transaction-left">
+            <div class="section-title">转出方</div>
             <div class="transaction-row">
-                <label style="font-size: 16px;">转出方:</label>
                 <select id="fromPlayer" class="select-player">
                     <!-- 玩家选择框 -->
                 </select>
                 <div id="transaction-from-player-button" class="player-buttons">
                 </div>
             </div>
+            <div class="section-title">转入方</div>
             <div class="transaction-row">
-                <label style="font-size: 16px;">转入方:</label>
                 <select id="toPlayer" class="select-player">
                     <!-- 玩家选择框 -->
                 </select>
                 <div id="transaction-to-player-button" class="player-buttons">
                 </div>
             </div>
+        </div>
+        <div class="transaction-right">
             <div class="transaction-row">
-                <label>金额: $</label>
+                <div class="section-title">金额: </div>
                 <div class="input-group">
-                    <input id="amount_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                    <span class="input-group-addon">M</span>
-                </div>
-                <div class="input-group">
-                    <input id="amount_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                    <span class="input-group-addon">k</span>
-                </div>
-                <div class="amount-buttons">
-                    <button onclick="setAmount(5000)">5M</button>
-                    <button onclick="setAmount(3000)">3M</button>
-                    <button onclick="setAmount(2000)">2M</button>
-                    <button onclick="setAmount(1000)">1M</button>
-                    <button onclick="setAmount(500)">500k</button>
-                    <button onclick="setAmount(300)">300k</button>
-                    <button onclick="setAmount(200)">200k</button>
-                    <button onclick="setAmount(100)">100k</button>
+                    <label style="font-size: 20px; margin-left: 20px;">$</label>
+                    <input id="amount_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required", style="font-size: 20px;">
+                    <span class="input-group-addon" style="margin-right: 10px; font-size: 20px;">M</span>
+                    <input id="amount_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required", style="font-size: 20px;">
+                    <span class="input-group-addon" style="font-size: 20px;">k</span>
                 </div>
             </div>
-            <button id="transfer" class="btn-primary">转账</button>
-            <button id="buyAssetButton" class="btn-secondary" onclick="openModal('buyAssetModal')">购买资产</button>
-            <button id="mortgageButton" class="btn-secondary" onclick="openModal('mortgageModal')">资产抵押</button>
-        </div>
-        <div id="roundDisplay">轮次: 0</div>
-        <div class="eco-curve">经济曲线</div>
-        <div id="charts" class="charts-container">
-            <div class="chart-container">
-                <div class="chartTitle">总资产</div>
-                <canvas id="assetChart"></canvas>
+            <div class="amount-buttons">
+                <button onclick="setAmount(5000)">5M</button>
+                <button onclick="setAmount(3000)">3M</button>
+                <button onclick="setAmount(2000)">2M</button>
+                <button onclick="setAmount(1000)">1M</button>
+                <button onclick="setAmount(500)">500k</button>
+                <button onclick="setAmount(300)">300k</button>
+                <button onclick="setAmount(200)">200k</button>
+                <button onclick="setAmount(100)">100k</button>
             </div>
-            <div class="chart-container">
-                <div class="chartTitle">现金</div>
-                <canvas id="cashChart"></canvas>
+            <div class="section-title">交易操作</div>
+            <div class="button-row">
+                <button id="transfer" class="btn-primary">转账</button>
+                <button id="buyAssetButton" class="btn-secondary" onclick="openModal('buyAssetModal')">购买资产</button>
+                <button id="mortgageButton" class="btn-secondary" onclick="openModal('mortgageModal')">资产抵押</button>
             </div>
         </div>
-        <div class="logTitle">操作日志</div>
-        <div id="log" class="log-container">
-            <ul id="logList">
-                <!-- 日志将通过JS动态生成 -->
-            </ul>
-        </div>
-        <footer>
-            &copy; 2024 大富翁财富记录 by ASUA
-        </footer>
     </div>
 
+    <div id="charts" class="section charts-container">
+        <div class="chart-container">
+            <div class="chartTitle">总资产</div>
+            <canvas id="assetChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <div class="chartTitle">现金</div>
+            <canvas id="cashChart"></canvas>
+        </div>
+    </div>
+
+
+    <div class="logTitle">操作日志</div>
+    <div id="log" class="section log-containerr">
+        <ul id="logList">
+            <!-- 日志将通过JS动态生成 -->
+        </ul>
+    </div>
+
+
+    <footer>
+        &copy; 2024 大富翁财富记录 by ASUA
+    </footer>
+
     <!-- 初始化现金弹窗 -->
-    <div id="initModal" class="modal">
-        <div class="modal-content">
-            <h2>初始化现金</h2>
-            <div id="initPlayersCash" class="modal-body">
-                <!-- 动态生成玩家初始现金输入 -->
+    <div class="init">
+        <div id="initModal" class="modal">
+            <div class="modal-content">
+                <h2>初始化现金</h2>
+                <div id="initPlayersCash" class="modal-body">
+                    <!-- 动态生成玩家初始现金输入 -->
+                </div>
+                <div class="button-row">
+                    <button id="confirmInit" class="btn-primary">确认</button>
+                    <button onclick="closeModal('initModal')" class="btn-secondary">取消</button>
+                </div>
             </div>
-            <button id="confirmInit" class="btn-primary">确认</button>
         </div>
     </div>
 
     <!-- 购买资产模态窗口 -->
-    <div id="buyAssetModal" class="modal">
-        <div class="modal-content">
-            <h2>购买资产</h2>
-            <label id="buyAssetPlayerLabel" for="buyAssetPlayer">购买方:</label>
-                <!-- 玩家选择框 -->
-            </select>
-            <div id="buy-asset-player-button" class="player-buttons">
-            </div>
-            <label for="buyAmount">金额: $</label>
-            <div class="input-group">
-                <input id="buyAmount_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                <span class="input-group-addon">M</span>
-                <div class="amount-buttons">
-                    <button onclick="setAmountBuyAsset(5000)">5M</button>
-                    <button onclick="setAmountBuyAsset(3000)">3M</button>
-                    <button onclick="setAmountBuyAsset(2000)">2M</button>
-                    <button onclick="setAmountBuyAsset(1000)">1M</button>
+    <div class="transaction-modal">
+        <div id="buyAssetModal" class="modal">
+            <div class="modal-content">
+                <h2>购买资产</h2>
+                <div class="modal-body">
+                    <div class="modal-left">
+                        <label id="buyAssetPlayerLabel" for="buyAssetPlayer" style="font-size: 20px;">购买方:</label>
+                        <div id="buy-asset-player-button" class="player-buttons"></div>
+                    </div>
+                    <div class="modal-right">
+                        <label for="buyAmount" style="font-size: 20px; margin-bottom: 30px;">金额:</label>
+                        <div class="input-group">
+                            <label style="font-size: 20px; margin-left: 20px;">$</label>
+                            <input id="buyAmount_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" style="font-size: 20px;">
+                            <span class="input-group-addon" style="margin-right: 10px; font-size: 20px;">M</span>
+                            <input id="buyAmount_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" style="font-size: 20px;">
+                            <span class="input-group-addon" style="font-size: 20px;">k</span>
+                        </div>
+                        <div class="amount-buttons" style="margin-top: 15px;">
+                            <button onclick="setAmountBuyAsset(5000)">5M</button>
+                            <button onclick="setAmountBuyAsset(3000)">3M</button>
+                            <button onclick="setAmountBuyAsset(2000)">2M</button>
+                            <button onclick="setAmountBuyAsset(1000)">1M</button>
+                            <button onclick="setAmountBuyAsset(500)">500k</button>
+                            <button onclick="setAmountBuyAsset(300)">300k</button>
+                            <button onclick="setAmountBuyAsset(200)">200k</button>
+                            <button onclick="setAmountBuyAsset(100)">100k</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-row">
+                    <button onclick="buyAsset()" class="btn-primary">确认</button>
+                    <button onclick="closeModal('buyAssetModal')" class="btn-secondary">取消</button>
                 </div>
             </div>
-            <div class="input-group">
-                <input id="buyAmount_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                <span class="input-group-addon">k</span>
-                <div class="amount-buttons">
-                    <button onclick="setAmountBuyAsset(500)">500k</button>
-                    <button onclick="setAmountBuyAsset(300)">300k</button>
-                    <button onclick="setAmountBuyAsset(200)">200k</button>
-                    <button onclick="setAmountBuyAsset(100)">100k</button>
-                </div>
-            </div>
-            <button onclick="buyAsset()" class="btn-primary">确认</button>
-            <button onclick="closeModal('buyAssetModal')" class="btn-secondary">取消</button>
         </div>
     </div>
 
     <!-- 资产抵押模态窗口 -->
-    <div id="mortgageModal" class="modal">
-        <div class="modal-content">
-            <h2>资产抵押</h2>
-            <label id="mortgagePlayer" for="buyNortgagePlayer">抵押方:</label>
-                <!-- 玩家选择框 -->
-            </select>
-            <div id="mortgage-player-button" class="player-buttons">
-            </div>
-            <label for="mortgageOriginalPrice">原价:</label>
-            <div class="input-group">
-                <input id="mortgageOriginalPrice_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                <span class="input-group-addon">M</span>
-                <div class="amount-buttons">
-                    <button onclick="setMortgageOriginalPrice(5000)">5M</button>
-                    <button onclick="setMortgageOriginalPrice(3000)">3M</button>
-                    <button onclick="setMortgageOriginalPrice(2000)">2M</button>
-                    <button onclick="setMortgageOriginalPrice(1000)">1M</button>
+    <div class="transaction-modal">
+        <div id="mortgageModal" class="modal">
+            <div class="modal-content">
+                <h2>资产抵押</h2>
+                <div class="modal-body">
+                    <div class="modal-left">
+                        <label id="mortgagePlayer" for="mortgagePlayer" style="font-size: 20px;">抵押方:</label>
+                        <div id="mortgage-player-button" class="player-buttons"></div>
+                    </div>
+                    <div class="modal-right">
+                        <label for="mortgageOriginalPrice" style="font-size: 20px;">原价:</label>
+                        <div class="input-group">
+                            <label style="font-size: 20px; margin-left: 20px;">$</label>
+                            <input id="mortgageOriginalPrice_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" style="font-size: 20px;">
+                            <span class="input-group-addon" style="font-size: 20px;">M</span>
+                            <input id="mortgageOriginalPrice_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" style="font-size: 20px;">
+                            <span class="input-group-addon" style="font-size: 20px;">k</span>
+                        </div>
+                        <div class="amount-buttons" style="margin-top: 15px; margin-bottom: 30px;">
+                            <button onclick="setMortgageOriginalPrice(5000)">5M</button>
+                            <button onclick="setMortgageOriginalPrice(3000)">3M</button>
+                            <button onclick="setMortgageOriginalPrice(2000)">2M</button>
+                            <button onclick="setMortgageOriginalPrice(1000)">1M</button>
+                            <button onclick="setMortgageOriginalPrice(500)">500k</button>
+                            <button onclick="setMortgageOriginalPrice(300)">300k</button>
+                            <button onclick="setMortgageOriginalPrice(200)">200k</button>
+                            <button onclick="setMortgageOriginalPrice(100)">100k</button>
+                        </div>
+                        <label for="mortgagePrice" style="font-size: 20px">抵押价格:</label>
+                        <div class="input-group">
+                            <label style="font-size: 20px; margin-left: 20px;">$</label>
+                            <input id="mortgagePrice_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" style="font-size: 20px;">
+                            <span class="input-group-addon" style="font-size: 20px;">M</span>
+                            <input id="mortgagePrice_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" style="font-size: 20px;">
+                            <span class="input-group-addon" style="font-size: 20px;">k</span>
+                        </div>
+                        <div class="amount-buttons" style="margin-top: 15px;">
+                            <button onclick="setMortgagePrice(5000)">5M</button>
+                            <button onclick="setMortgagePrice(3000)">3M</button>
+                            <button onclick="setMortgagePrice(2000)">2M</button>
+                            <button onclick="setMortgagePrice(1000)">1M</button>
+                            <button onclick="setMortgagePrice(500)">500k</button>
+                            <button onclick="setMortgagePrice(300)">300k</button>
+                            <button onclick="setMortgagePrice(200)">200k</button>
+                            <button onclick="setMortgagePrice(100)">100k</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-row">
+                    <button onclick="mortgageAsset()" class="btn-primary">确认</button>
+                    <button onclick="closeModal('mortgageModal')" class="btn-secondary">取消</button>
                 </div>
             </div>
-            <div class="input-group">
-                <input id="mortgageOriginalPrice_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                <span class="input-group-addon">k</span>
-                <div class="amount-buttons">
-                    <button onclick="setMortgageOriginalPrice(500)">500k</button>
-                    <button onclick="setMortgageOriginalPrice(300)">300k</button>
-                    <button onclick="setMortgageOriginalPrice(200)">200k</button>
-                    <button onclick="setMortgageOriginalPrice(100)">100k</button>
-                </div>
-            </div>
-            <label for="mortgagePrice">抵押价格:</label>
-            <div class="input-group">
-                <input id="mortgagePrice_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                <span class="input-group-addon">M</span>
-                <div class="amount-buttons">
-                    <button onclick="setMortgagePrice(5000)">5M</button>
-                    <button onclick="setMortgagePrice(3000)">3M</button>
-                    <button onclick="setMortgagePrice(2000)">2M</button>
-                    <button onclick="setMortgagePrice(1000)">1M</button>
-                </div>
-            </div>
-            <div class="input-group">
-                <input id="mortgagePrice_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required">
-                <span class="input-group-addon">k</span>
-                <div class="amount-buttons">
-                    <button onclick="setMortgagePrice(500)">500k</button>
-                    <button onclick="setMortgagePrice(300)">300k</button>
-                    <button onclick="setMortgagePrice(200)">200k</button>
-                    <button onclick="setMortgagePrice(100)">100k</button>
-                </div>
-            </div>
-            <button onclick="mortgageAsset()" class="btn-primary">确认</button>
-            <button onclick="closeModal('mortgageModal')" class="btn-secondary">取消</button>
         </div>
     </div>
 

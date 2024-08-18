@@ -123,6 +123,14 @@ export function saveHistory() {
 export function setPlayerAsFrom(playerIndex) {
     const fromPlayerSelect = document.getElementById('fromPlayer');
     fromPlayerSelect.value = playerIndex;
+
+    if (parseInt(playerIndex) === players.length) {
+        fromPlayerSelect.style.backgroundColor = 'white';
+    }
+    else {
+        fromPlayerSelect.style.backgroundColor = players[playerIndex].color;
+    }
+
     fromPlayerIndex = playerIndex;
 }
 
@@ -130,6 +138,12 @@ export function setPlayerAsFrom(playerIndex) {
 export function setPlayerAsTo(playerIndex) {
     const toPlayerSelect = document.getElementById('toPlayer');
     toPlayerSelect.value = playerIndex;
+    if (parseInt(playerIndex) === players.length) {
+        toPlayerSelect.style.backgroundColor = 'white';
+    }
+    else {
+        toPlayerSelect.style.backgroundColor = players[playerIndex].color;
+    }
     ToPlayerIndex = playerIndex;
 }
 
@@ -145,6 +159,7 @@ export function setAmount(amount) {
 export function setPlayerBuyAsset(playerIndex) {
     const buyAssetPlayer = document.getElementById('buyAssetPlayerLabel');
     buyAssetPlayer.textContent = "购买方: " + players[playerIndex].name;
+    buyAssetPlayer.style.backgroundColor = players[playerIndex].color;
     buyAssetPlayerIndex = playerIndex;
 }
 
@@ -158,6 +173,7 @@ export function setAmountBuyAsset(amount) {
 export function setPlayerMortgage(playerIndex) {
     const mortgagePlayer = document.getElementById('mortgagePlayer');
     mortgagePlayer.textContent = "抵押方: " + players[playerIndex].name;
+    mortgagePlayer.style.backgroundColor = players[playerIndex].color;
     mortgagePlayerIndex = playerIndex;
 }
 

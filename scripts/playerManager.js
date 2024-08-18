@@ -59,6 +59,7 @@ export function initializePlayers() {
 
         let transactionFromPlayerButton = document.createElement("button");
         transactionFromPlayerButton.id = `playerFromButton${index}`;
+        transactionFromPlayerButton.className = "transaction-from-player-button";
         transactionFromPlayerButton.textContent = player.name;
         transactionFromPlayerButton.style.backgroundColor = player.color;
         transactionFromPlayerButton.onclick = function () {
@@ -67,6 +68,7 @@ export function initializePlayers() {
 
         let transactionToPlayerButton = document.createElement("button");
         transactionToPlayerButton.id = `playerToButton${index}`;
+        transactionToPlayerButton.className = "transaction-to-player-button";
         transactionToPlayerButton.textContent = player.name;
         transactionToPlayerButton.style.backgroundColor = player.color;
         transactionToPlayerButton.onclick = function () {
@@ -75,6 +77,7 @@ export function initializePlayers() {
 
         let buyAssetPlayerButton = document.createElement("button");
         buyAssetPlayerButton.id = `playerBuyAssetButton${index}`;
+        buyAssetPlayerButton.className = "buy-asset-player-button";
         buyAssetPlayerButton.textContent = player.name;
         buyAssetPlayerButton.style.backgroundColor = player.color;
         buyAssetPlayerButton.onclick = function () {
@@ -84,6 +87,7 @@ export function initializePlayers() {
 
         let mortgagePlayerButton = document.createElement("button");
         mortgagePlayerButton.id = `playerMortgageButton${index}`;
+        mortgagePlayerButton.className = "mortgage-player-button";
         mortgagePlayerButton.textContent = player.name;
         mortgagePlayerButton.style.backgroundColor = player.color;
         mortgagePlayerButton.onclick = function () {
@@ -103,13 +107,17 @@ export function initializePlayers() {
     transactionFromPlayerButton.id = `playerFromButton${playerCount}`;
     transactionFromPlayerButton.textContent = bank.name;
     transactionFromPlayerButton.style.backgroundColor = bank.color;
-    transactionFromPlayerButton.onclick = setPlayerAsFrom(playerCount);
+    transactionFromPlayerButton.onclick = function () {
+        setPlayerAsFrom(playerCount);
+    }
 
     let transactionToPlayerButton = document.createElement("button");
     transactionToPlayerButton.id = `playerToButton${playerCount}`;
     transactionToPlayerButton.textContent = bank.name;
     transactionToPlayerButton.style.backgroundColor = bank.color;
-    transactionToPlayerButton.onclick = setPlayerAsTo(playerCount);
+    transactionToPlayerButton.onclick = function () {
+        setPlayerAsTo(playerCount);
+    }
 
     transactionFromPlayerButtons.appendChild(transactionFromPlayerButton);
     transactionToPlayerButtons.appendChild(transactionToPlayerButton);
