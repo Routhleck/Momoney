@@ -1,4 +1,4 @@
-import {players, bank, updatePlayers, updateBank} from "../main.js";
+import {players, bank, updatePlayers, updateBank, round} from "../main.js";
 import { setPlayerAsFrom, setPlayerAsTo, setAmount,
     setPlayerBuyAsset, setAmountBuyAsset,
     setPlayerMortgage, setMortgageOriginalPrice, setMortgagePrice
@@ -226,6 +226,9 @@ export function initializePlayersWithCache() {
     transactionFromPlayerButtons.appendChild(transactionFromPlayerButton);
     transactionToPlayerButtons.appendChild(transactionToPlayerButton);
     updatePlayerSelectors();
+    
+    document.getElementById("roundDisplay").textContent = "轮次: " + round;
+    document.getElementById("PlayerCount").value = playerCount;
 
     updateCharts();
 }
