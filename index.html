@@ -9,6 +9,18 @@
 <body>
     <div class="container">
         <h1>大富翁财富记录</h1>
+        <label for="PlayerCount">选择玩家数量 (2-10):</label>
+        <select id="PlayerCount">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6" selected>6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
         <div id="players" class="players-container">
             <!-- 玩家信息将通过JS动态生成 -->
         </div>
@@ -26,14 +38,7 @@
                 <select id="fromPlayer" class="select-player">
                     <!-- 玩家选择框 -->
                 </select>
-                <div class="player-buttons">
-                    <button id="playerFromButton0" onclick="setPlayerAsFrom(0)">玩家1</button>
-                    <button id="playerFromButton1" onclick="setPlayerAsFrom(1)">玩家2</button>
-                    <button id="playerFromButton2" onclick="setPlayerAsFrom(2)">玩家3</button>
-                    <button id="playerFromButton3" onclick="setPlayerAsFrom(3)">玩家4</button>
-                    <button id="playerFromButton4" onclick="setPlayerAsFrom(4)">玩家5</button>
-                    <button id="playerFromButton5" onclick="setPlayerAsFrom(5)">玩家6</button>
-                    <button id="playerFromButton6" onclick="setPlayerAsFrom(6)">银行</button>
+                <div id="transaction-from-player-button" class="player-buttons">
                 </div>
             </div>
             <div class="transaction-row">
@@ -41,14 +46,7 @@
                 <select id="toPlayer" class="select-player">
                     <!-- 玩家选择框 -->
                 </select>
-                <div class="player-buttons">
-                    <button id="playerToButton0" onclick="setPlayerAsTo(0)">玩家1</button>
-                    <button id="playerToButton1" onclick="setPlayerAsTo(1)">玩家2</button>
-                    <button id="playerToButton2" onclick="setPlayerAsTo(2)">玩家3</button>
-                    <button id="playerToButton3" onclick="setPlayerAsTo(3)">玩家4</button>
-                    <button id="playerToButton4" onclick="setPlayerAsTo(4)">玩家5</button>
-                    <button id="playerToButton5" onclick="setPlayerAsTo(5)">玩家6</button>
-                    <button id="playerToButton6" onclick="setPlayerAsTo(6)">银行</button>
+                <div id="transaction-to-player-button" class="player-buttons">
                 </div>
             </div>
             <div class="transaction-row">
@@ -117,13 +115,7 @@
             <label id="buyAssetPlayerLabel" for="buyAssetPlayer">购买方:</label>
                 <!-- 玩家选择框 -->
             </select>
-            <div class="player-buttons">
-                <button id="playerBuyAssetButton0" onclick="setPlayerBuyAsset(0)">玩家1</button>
-                <button id="playerBuyAssetButton1" onclick="setPlayerBuyAsset(1)">玩家2</button>
-                <button id="playerBuyAssetButton2" onclick="setPlayerBuyAsset(2)">玩家3</button>
-                <button id="playerBuyAssetButton3" onclick="setPlayerBuyAsset(3)">玩家4</button>
-                <button id="playerBuyAssetButton4" onclick="setPlayerBuyAsset(4)">玩家5</button>
-                <button id="playerBuyAssetButton5" onclick="setPlayerBuyAsset(5)">玩家6</button>
+            <div id="buy-asset-player-button" class="player-buttons">
             </div>
             <label for="buyAmount">金额: $</label>
             <div class="input-group">
@@ -158,13 +150,7 @@
             <label id="mortgagePlayer" for="buyNortgagePlayer">抵押方:</label>
                 <!-- 玩家选择框 -->
             </select>
-            <div class="player-buttons">
-                <button id="playerMortgageButton0" onclick="setPlayerMortgage(0)">玩家1</button>
-                <button id="playerMortgageButton1" onclick="setPlayerMortgage(1)">玩家2</button>
-                <button id="playerMortgageButton2" onclick="setPlayerMortgage(2)">玩家3</button>
-                <button id="playerMortgageButton3" onclick="setPlayerMortgage(3)">玩家4</button>
-                <button id="playerMortgageButton4" onclick="setPlayerMortgage(4)">玩家5</button>
-                <button id="playerMortgageButton5" onclick="setPlayerMortgage(5)">玩家6</button>
+            <div id="mortgage-player-button" class="player-buttons">
             </div>
             <label for="mortgageOriginalPrice">原价:</label>
             <div class="input-group">

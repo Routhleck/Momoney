@@ -1,5 +1,5 @@
 import {players, bank, history, updateHistory, updateRound} from "../main.js";
-import { updatePlayerSelectors, updatePlayersDisplay } from "./playerManager.js";
+import { initializePlayers, updatePlayerSelectors, updatePlayersDisplay } from "./playerManager.js";
 import { updateCharts } from "./chart.js";
 
 export function exportData() {
@@ -42,6 +42,11 @@ export function importData(event) {
     reader.onload = function (e) {
         const jsonData = e.target.result;
         const importedData = JSON.parse(jsonData);
+        const playerCount = importedData.players.length;
+        document.getElementById("PlayerCount").value = playerCount;
+
+        initializePlayers()
+
 
         const playerContainer = document.getElementById("players");
 

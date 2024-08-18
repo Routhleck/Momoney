@@ -25,7 +25,6 @@ export var assetChart, cashChart;
 
 document.addEventListener("DOMContentLoaded", function () {
     initializePlayers();
-    updatePlayerSelectors();
     document.getElementById("initialize").addEventListener("click", showInitModal);
     document.getElementById("confirmInit").addEventListener("click", initializeCash);
     document.getElementById("nextRound").addEventListener("click", nextRound);
