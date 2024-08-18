@@ -4,6 +4,9 @@
 ## Project Overview
 This is a wealth management system for the Momoney game, allowing players to manage cash, assets, transactions, and history records. The system provides charts to display players' total assets and cash changes, and supports data import and export.
 
+![img1](./img/1.png)
+![img2](./img/2.png)
+
 ## Features
 - Initialize cash for players and the bank
 - Record transactions and asset changes for each round
