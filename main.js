@@ -23,6 +23,8 @@ export var round = 0;
 export var history = [];
 export var assetChart, cashChart;
 
+export var playerCount = 0;
+
 let loadSucess = false;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -32,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     else {
         initializePlayers();
+        initializeCash();
     }
     document.getElementById("initialize").addEventListener("click", showInitModal);
     document.getElementById("confirmInit").addEventListener("click", initializeCash);
@@ -60,6 +63,10 @@ export function updateRound(newRound) {
 export function updateHistory(newHistory) {
     history = newHistory;
     saveToLocalStorage();
+}
+
+export function updatePlayerCount() {
+    playerCount = parseInt(document.getElementById("PlayerCount").value);
 }
 
 export function updateAssetChart(newAssetChart) {
