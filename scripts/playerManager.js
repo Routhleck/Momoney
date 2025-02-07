@@ -1,4 +1,4 @@
-import {players, bank, updatePlayers, updateBank, round} from "../main.js";
+import {players, bank, updatePlayers, updateBank, round, playerCount, updatePlayerCount} from "../main.js";
 import { setPlayerAsFrom, setPlayerAsTo, setAmount,
     setPlayerBuyAsset, setAmountBuyAsset,
     setPlayerMortgage, setMortgageOriginalPrice, setMortgagePrice
@@ -10,7 +10,7 @@ document.getElementById("PlayerCount").addEventListener("change", initializePlay
 
 
 export function initializePlayers() {
-    const playerCount = parseInt(document.getElementById("PlayerCount").value);
+    updatePlayerCount()
 
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#F5A623", "#BD10E0", "#50E3C2", "#FF9F43", "#33FFF6", "#F533FF", "#93FF33"];
 
@@ -127,7 +127,8 @@ export function initializePlayers() {
 }
 
 export function initializePlayersWithCache() {
-    const playerCount = players.length;
+    document.getElementById("PlayerCount").value = players.length;
+    updatePlayerCount();
 
     const colors = ["#FF5733", "#33FF57", "#3357FF", "#F5A623", "#BD10E0", "#50E3C2", "#FF9F43", "#33FFF6", "#F533FF", "#93FF33"];
 
@@ -240,7 +241,7 @@ export function updatePlayerName(index, name) {
 }
 
 export function updatePlayerSelectors() {
-    const playerCount = parseInt(document.getElementById("PlayerCount").value);
+    updatePlayerCount();
     const fromPlayer = document.getElementById("fromPlayer");
     const toPlayer = document.getElementById("toPlayer");
 

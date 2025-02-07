@@ -1,4 +1,4 @@
-import { players, bank, history, round, updatePlayers, updateBank, updateHistory, updateRound } from "../main.js";
+import { players, bank, history, round, updatePlayers, updateBank, updateHistory, updateRound, playerCount} from "../main.js";
 import { addLog } from "./logManager.js";
 import { updatePlayersDisplay } from "./playerManager.js";
 import { updateCharts } from "./chart.js";
@@ -8,6 +8,7 @@ let ToPlayerIndex = 0;
 let transferAmount = 0;
 let buyAssetPlayerIndex = 0;
 let mortgagePlayerIndex = 0;
+
 
 export function initializeCash() {
     players.forEach((player, index) => {
@@ -55,7 +56,7 @@ export function transferMoney() {
 
     let logMessage = "";
 
-    if (fromIndex === "6") {
+    if (fromIndex === playerCount) {
         let newBank = { ...bank };
         newBank.cash -= amount;
         updateBank(newBank);
@@ -66,7 +67,7 @@ export function transferMoney() {
         updatePlayers(newPlayers);
 
         logMessage = `银行给 ${players[toIndex].name} 转账 $${amount_M}M ${amount_k}k`;
-    } else if (toIndex === "6") {
+    } else if (toIndex === playerCount) {
         let newBank = { ...bank };
         newBank.cash += amount;
         updateBank(newBank);
