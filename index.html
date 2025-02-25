@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>大富翁财富记录</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+
 <body>
     <div class="players-controls-container">
         <div class="section players-container">
@@ -13,7 +17,7 @@
                 <!-- 玩家信息将通过JS动态生成 -->
             </div>
         </div>
-    
+
         <div class="section controls">
             <div class="section-title">控制面板</div>
             <label class="PlayerCountLabel" for="PlayerCount">选择玩家数量 (2-10):</label>
@@ -38,7 +42,7 @@
             <input type="file" id="importData" style="display:none;">
         </div>
     </div>
-    
+
     <div class="section transaction">
         <div class="transaction-left">
             <div class="section-title">转出方</div>
@@ -63,9 +67,9 @@
                 <div class="section-title">金额: </div>
                 <div class="input-group">
                     <label style="font-size: 20px; margin-left: 20px;">$</label>
-                    <input id="amount_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required", style="font-size: 20px;">
+                    <input id="amount_M" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" , style="font-size: 20px;">
                     <span class="input-group-addon" style="margin-right: 10px; font-size: 20px;">M</span>
-                    <input id="amount_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required", style="font-size: 20px;">
+                    <input id="amount_k" name="up_the_peak_gain" type="number" class="layui-input from-control" lay-verify="required" , style="font-size: 20px;">
                     <span class="input-group-addon" style="font-size: 20px;">k</span>
                 </div>
             </div>
@@ -97,6 +101,38 @@
             <div class="chartTitle">现金</div>
             <canvas id="cashChart"></canvas>
         </div>
+    </div>
+
+    <div id="stacked-charts" class="section charts-container">
+        <div class="chart-container">
+            <div id="asset-stacked-chart" , style="width: 100%;height: 100%;"></div>
+        </div>
+        <div class="chart-container">
+            <div id="cash-stacked-chart" , style="width: 100%;height: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="line-race-charts" class="section charts-container">
+        <div class="chart-container">
+            <div id="asset-line-race-chart" , style="width: 100%;height: 100%;"></div>
+        </div>
+        <div class="chart-container">
+            <div id="cash-line-race-chart" , style="width: 100%;height: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="bar-race-charts" class="section charts-container">
+        <div class="chart-container">
+            <div id="asset-bar-race-chart"></div>
+        </div>
+        <div class="chart-container">
+            <div id="cash-bar-race-chart"></div>
+        </div>
+    </div>
+
+    <div id="chart-controls" style="margin-top: 20px; text-align: center;">
+        <button class="replay-btn">↺ 重播动画</button>
+        <button class="record-btn">⏺ 录制视频</button>
     </div>
 
 
@@ -230,4 +266,5 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="main.js"></script>
 </body>
+
 </html>
