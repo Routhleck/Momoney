@@ -21,7 +21,6 @@ export var bank = { name: "银行", cash: 1000000 };
 
 export var round = 0;
 export var history = [];
-export var assetChart, cashChart;
 
 export var playerCount = 0;
 
@@ -43,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("exportData").addEventListener("click", exportData);
     document.getElementById("importDataButton").addEventListener("click", () => document.getElementById("importData").click());
     document.getElementById("importData").addEventListener("change", importData);
+    document.getElementById("replay-btn").addEventListener("click", updateCharts);
 });
 
 export function updatePlayers(newPlayers) {
@@ -67,14 +67,6 @@ export function updateHistory(newHistory) {
 
 export function updatePlayerCount() {
     playerCount = parseInt(document.getElementById("PlayerCount").value);
-}
-
-export function updateAssetChart(newAssetChart) {
-    assetChart = newAssetChart;
-}
-
-export function updateCashChart(newCashChart) {
-    cashChart = newCashChart;
 }
 
 export function saveToLocalStorage() {

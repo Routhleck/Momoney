@@ -1,8 +1,17 @@
-import { players, history, assetChart, cashChart, updateAssetChart, updateCashChart } from '../main.js';
+import { players, history } from '../main.js';
+
+var assetChart;
+var cashChart;
+var assetStackedChart;
+var cashStackedChart;
+var assetLineRaceChart;
+var cashLineRaceChart;
+var assetBarRaceChart;
+var cashBarRaceChart;
+let chartControllers = {};
+let activeCharts = {};
 
 export function updateCharts() {
-    if (assetChart) assetChart.destroy();
-    if (cashChart) cashChart.destroy();
 
     const assetData = history.map(h => ({
         round: h.round,
@@ -18,93 +27,80 @@ export function updateCharts() {
     renderChart('cashChart', '现金', cashData);
     renderStackedChart('asset-stacked-chart', '资产堆叠面积图', assetData);
     renderStackedChart('cash-stacked-chart', '现金堆叠面积图', cashData);
-    renderLineRaceChart('asset-line-race-chart', '总资产折线动态图', assetData);
-    renderLineRaceChart('cash-line-race-chart', '现金折线动态图', cashData);
-    renderBarRaceChart('asset-bar-race-chart', '总资产柱状动态图', assetData);
-    renderBarRaceChart('cash-bar-race-chart', '现金柱状动态图', cashData);
+    assetLineRaceChart = renderLineRaceChart('asset-line-race-chart', '总资产折线动态图', assetData);
+    cashLineRaceChart = renderLineRaceChart('cash-line-race-chart', '现金折线动态图', cashData);
+    assetBarRaceChart = renderBarRaceChart('asset-bar-race-chart', '总资产柱状动态图', assetData);
+    cashBarRaceChart = renderBarRaceChart('cash-bar-race-chart', '现金柱状动态图', cashData);
 }
 
 export function renderChart(canvasId, label, data) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
-    let chart;
-
-    if (canvasId === 'assetChart' && assetChart) {
-        assetChart.destroy();
-    } else if (canvasId === 'cashChart' && cashChart) {
-        cashChart.destroy();
+    var chartDom = document.getElementById(canvasId);
+    if (canvasId === 'assetChart') {
+        assetChart = echarts.init(chartDom);
+    } else {
+        cashChart = echarts.init(chartDom);
     }
+    var option;
 
-    const maxY = Math.ceil(Math.max(...data.map(d => Math.max(...d.values))));
-    const minY = Math.floor(Math.min(...data.map(d => Math.min(...d.values))));
-    const range = maxY - minY;
-    const extraPadding = range * 0.1;
-
-    const labels = data.map(d => `第${d.round}轮`);
-
-    const datasets = players.map((player, index) => {
-        const playerData = data.map(d => d.values[index]);
-        const trendData = calculatePolynomialTrendLine(playerData);
-
-        return [{
-                label: player.name,
-                data: playerData,
-                borderColor: player.color,
-                backgroundColor: 'rgba(0,0,0,0)',
-                borderWidth: 2,
-                pointRadius: 3,
-                fill: false
+    const playersData = players.map(player => {
+        return {
+            name: player.name,
+            type: 'line',
+            itemStyle: {
+                color: player.color // 使用玩家的颜色
             },
-            {
-                label: `${player.name} 趋势`,
-                data: trendData,
-                borderColor: player.color,
-                borderDash: [10, 5],
-                borderWidth: 2,
-                pointRadius: 0, // 去除数据点
-                fill: false
-            }
-        ];
-    }).flat();
-
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true, // 确保图表是响应式的
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    ticks: {
-                        min: minY - extraPadding,
-                        max: maxY + extraPadding,
-                        callback: function(value, index, values) {
-                            return value >= 1000 ? (value / 1000).toFixed(1) + 'M' : value + 'k';
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
-                        }
-                    }
-                }
-            }
-        }
+            data: data.map(d => {
+                const value = d.values[players.indexOf(player)];
+                return value < 0 ? 0 : value; // 如果值小于0，则返回0
+            }),
+            smooth: true
+        };
     });
 
+    option = {
+        title: {
+            text: label
+        },
+        legend: {
+            data: players.map(player => player.name)
+        },
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: data.map(d => `第${d.round}轮`)
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: {
+                formatter: function(value) {
+                    if (value >= 1000) {
+                        return (value / 1000).toFixed(1) + 'M'; // 百万级别
+                    } else if (value >= 1000) {
+                        return (value / 1).toFixed(1) + 'k'; // 千级别
+                    } else {
+                        return value.toString(); // 小于千的数值
+                    }
+                }
+            }
+        },
+        series: playersData
+    };
+
     if (canvasId === 'assetChart') {
-        updateAssetChart(chart);
-    } else if (canvasId === 'cashChart') {
-        updateCashChart(chart);
+        option && assetChart.setOption(option);
+    } else {
+        option && cashChart.setOption(option);
     }
 }
 
@@ -132,7 +128,12 @@ function calculatePolynomialTrendLine(data) {
 
 function renderStackedChart(canvasId, label, data) {
     var chartDom = document.getElementById(canvasId);
-    var myChart = echarts.init(chartDom);
+    if (canvasId === 'asset-stacked-chart') {
+        assetStackedChart = echarts.init(chartDom);
+    }
+    else {
+        cashStackedChart = echarts.init(chartDom);
+    }
     var option;
 
     const playersData = players.map(player => {
@@ -204,14 +205,37 @@ function renderStackedChart(canvasId, label, data) {
         series: playersData
     };
 
-    option && myChart.setOption(option);
+    if (canvasId === 'asset-stacked-chart') {
+        option && assetStackedChart.setOption(option);
+    }
+    else {
+        option && cashStackedChart.setOption(option);
+    }
 }
 
 function renderLineRaceChart(canvasId, label, data) {
+    // 清理已有实例
+    if (chartControllers[canvasId]) {
+        chartControllers[canvasId].destroy();
+        delete chartControllers[canvasId];
+    }
+
     const chartDom = document.getElementById(canvasId);
-    const myChart = echarts.init(chartDom);
+    var myChart = echarts.init(chartDom);
     var currentOption;
     var mediaRecorder;
+
+    // 创建控制器对象
+    const controller = {
+        chart: myChart,
+        animationTimer: null,
+        resizeHandler: null,
+        destroy: function() {
+            clearTimeout(this.animationTimer);
+            window.removeEventListener('resize', this.resizeHandler);
+            this.chart.dispose();
+        }
+    };
 
     // 转换原始数据为dataset格式
     const datasetSource = [
@@ -283,6 +307,8 @@ function renderLineRaceChart(canvasId, label, data) {
     // 配置图表选项
     const option = {
         animationDuration: 5000,
+        animationEasing: 'cubicInOut',
+        animationThreshold: 2000,
         dataset: [{
                 id: 'dataset_raw',
                 source: datasetSource
@@ -330,19 +356,44 @@ function renderLineRaceChart(canvasId, label, data) {
         series: seriesList
     };
 
-    currentOption = option;
-    myChart.setOption(option);
+    myChart.on('finished', () => {
+        console.log('Animation finished');
+    });
 
+    controller.resizeHandler = () => myChart.resize();
+    chartControllers[canvasId] = controller;
+
+    myChart.setOption(option);
     window.addEventListener('resize', myChart.resize);
+
+    return {
+        stop: () => controller.destroy(),
+        restart: () => myChart.setOption(option),
+    }
 }
 
 function renderBarRaceChart(canvasId, label, data) {
+    // 清理已有实例
+    if (activeCharts[canvasId]) {
+        activeCharts[canvasId].chart.dispose();
+        clearInterval(activeCharts[canvasId].timer);
+        delete activeCharts[canvasId];
+    }
     const chartDom = document.getElementById(canvasId);
-    // 确保容器可见
-    chartDom.style.width = '100%';
-    chartDom.style.height = '400px';
+    var myChart = echarts.init(chartDom);
+    // if (canvasId === 'asset-bar-race-chart') {
+    //     assetBarRaceChart = echarts.init(chartDom);
+    //     myChart = assetBarRaceChart;
+    // }
+    // else {
+    //     cashBarRaceChart = echarts.init(chartDom);
+    //     myChart = cashBarRaceChart;
+    // }
+    activeCharts[canvasId] = { 
+        chart: myChart,
+        timer: null
+    };
 
-    const myChart = echarts.init(chartDom);
     const updateFrequency = 500;
 
     // 生成颜色映射
@@ -465,7 +516,31 @@ function renderBarRaceChart(canvasId, label, data) {
         currentIndex++;
     }, updateFrequency);
 
+    activeCharts[canvasId].timer = timer;
+
+    myChart.on('dispose', () => {
+        clearInterval(timer);
+        window.removeEventListener('resize', () => myChart.resize());
+    });
+
     // 响应式处理
     window.addEventListener('resize', () => myChart.resize());
-    return myChart;
+
+    return {
+        stop: () => {
+            clearInterval(timer);
+            myChart.dispose();
+        },
+        restart: () => {
+            currentIndex = 0;
+            myChart.setOption(option);
+        }
+    }
+}
+
+export function replayCharts() {
+    assetLineRaceChart.restart();
+    cashLineRaceChart.restart();
+    assetBarRaceChart.restart();
+    cashBarRaceChart.restart();
 }
