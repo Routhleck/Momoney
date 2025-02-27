@@ -35,11 +35,7 @@ export function updateCharts() {
 
 export function renderChart(canvasId, label, data) {
     var chartDom = document.getElementById(canvasId);
-    if (canvasId === 'assetChart') {
-        assetChart = echarts.init(chartDom);
-    } else {
-        cashChart = echarts.init(chartDom);
-    }
+    var myChart = echarts.init(chartDom);
     var option;
 
     const playersData = players.map(player => {
@@ -97,11 +93,10 @@ export function renderChart(canvasId, label, data) {
         series: playersData
     };
 
-    if (canvasId === 'assetChart') {
-        option && assetChart.setOption(option);
-    } else {
-        option && cashChart.setOption(option);
-    }
+    
+    option && myChart.setOption(option);
+    // 响应式处理
+    window.addEventListener('resize', () => myChart.resize());
 }
 
 function calculatePolynomialTrendLine(data) {
@@ -128,12 +123,7 @@ function calculatePolynomialTrendLine(data) {
 
 function renderStackedChart(canvasId, label, data) {
     var chartDom = document.getElementById(canvasId);
-    if (canvasId === 'asset-stacked-chart') {
-        assetStackedChart = echarts.init(chartDom);
-    }
-    else {
-        cashStackedChart = echarts.init(chartDom);
-    }
+    var myChart = echarts.init(chartDom);
     var option;
 
     const playersData = players.map(player => {
@@ -205,12 +195,10 @@ function renderStackedChart(canvasId, label, data) {
         series: playersData
     };
 
-    if (canvasId === 'asset-stacked-chart') {
-        option && assetStackedChart.setOption(option);
-    }
-    else {
-        option && cashStackedChart.setOption(option);
-    }
+    
+    option && myChart.setOption(option);
+    // 响应式处理
+    window.addEventListener('resize', () => myChart.resize());
 }
 
 function renderLineRaceChart(canvasId, label, data) {
